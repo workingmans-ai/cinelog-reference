@@ -4,7 +4,7 @@
 >
 > **Current Phase:** 2 - Static Components
 >
-> **Status:** Phase 1 complete, starting Phase 2
+> **Status:** Phase 2 complete, awaiting validation
 
 ---
 
@@ -18,10 +18,10 @@
 
 ## Phase 2: Static Components
 
-- [ ] Build Navigation component
-- [ ] Build MovieCard component (hardcoded data)
-- [ ] Build MovieGrid component (hardcoded data)
-- [ ] Create basic page layouts (home, movie detail, watched)
+- [x] Build Navigation component
+- [x] Build MovieCard component (hardcoded data)
+- [x] Build MovieGrid component (hardcoded data)
+- [x] Create basic page layouts (home, movie detail, watched)
 
 ## Phase 3: TMDB Integration
 
