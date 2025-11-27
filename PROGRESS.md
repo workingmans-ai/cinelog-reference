@@ -2,9 +2,9 @@
 
 > **Last Updated:** 2025-11-27
 >
-> **Current Phase:** 3 - TMDB Integration (Complete)
+> **Current Phase:** 4 - Rating System (Complete)
 >
-> **Status:** Phase 3 complete with Load More pagination. Ready for Phase 4.
+> **Status:** Phase 4 complete with local state. Ready for Phase 5 (Database).
 
 ---
 
@@ -34,10 +34,12 @@
 
 ## Phase 4: Rating System (Local State)
 
-- [ ] Build StarRating component (from scratch)
-- [ ] Build RatingForm modal
-- [ ] Build RatingDisplay component
-- [ ] Implement local state for ratings
+- [x] Build StarRating component (from scratch)
+- [x] Build RatingForm modal
+- [x] Build RatingDisplay component
+- [x] Implement local state for ratings (RatingsContext)
+- [x] Update movie detail page with rating functionality
+- [x] Update watched list page with sort and delete
 
 ## Phase 5: Database Integration
 

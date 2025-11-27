@@ -452,22 +452,76 @@ That's why we have three tabs: Title, Actor, and Discover."
 ### Module 7: Rating System
 **Goal:** Pablo builds the core feature—rating movies across multiple dimensions.
 
+#### Movie Detail Page Enhancement
+
+Before building the rating system, we enhance the movie detail page with additional TMDB data:
+
+**TMDB Rating & Cast Display:**
+```
+The movie detail page now shows:
+- TMDB's community rating (vote_average) with a star icon
+- Top 5 cast members under "Starring"
+
+This uses append_to_response=credits to fetch cast data in a single API call.
+No extra request needed—just one query parameter.
+```
+
+**Teaching Moment — `append_to_response`:**
+```javascript
+// Instead of making two API calls...
+const movie = await fetch(`/movie/${id}`);
+const credits = await fetch(`/movie/${id}/credits`);
+
+// TMDB lets you combine them:
+const url = `/movie/${id}?append_to_response=credits`;
+// Now movie.credits.cast is included in the response!
+```
+
+This pattern is common in REST APIs. Pablo learns to read API docs for efficiency features.
+
+---
+
 | Lesson | What Pablo Learns | What Pablo Does | Milestone |
 |--------|-------------------|-----------------|-----------|
 | 7.1 Planning the Feature | Breaking features into components and state | Sketches UI, identifies state needed | Has a plan before coding |
-| 7.2 Star Rating Component | Controlled component, hover states | Builds reusable `StarRating` | Click stars 1-5, see them fill |
+| 7.2 Star Rating Component | Controlled component, hover states | Builds reusable `StarRating` (from scratch) | Click stars 1-5, see them fill |
 | 7.3 Rating Form Layout | Form structure, multiple inputs | Lays out rating form with all 5 dimensions | Form looks complete |
 | 7.4 Form State Management | Managing multiple state values | Wires up form inputs to state | Form values update correctly |
-| 7.5 Saving to Local State | Adding to array state, lifting state | Submit adds rating to watched list | **Movie rated and saved!** |
-| 7.6 Watched List Page | New route, displaying saved data | Creates page showing all rated movies | Sees all ratings in gallery |
-| 7.7 Movie Detail View | Showing details, edit/delete | Click movie → see full details and rating | Can review past ratings |
+| 7.5 Saving to Local State | Context API, lifting state | Submit saves rating via RatingsContext | **Movie rated and saved!** |
+| 7.6 Watched List Page | New route, displaying saved data, sorting | Creates sortable watched list with delete | Sees all ratings in gallery |
+| 7.7 Movie Detail View | Fetching details, TMDB rating, cast, edit | Click movie → see details + your rating | Can review and edit ratings |
+
+**Implementation Details:**
+
+**StarRating Component (built from scratch):**
+- Props: `value`, `onChange`, `readonly`, `size`
+- Hover state highlights stars up to cursor position
+- Click sets the rating
+- Uses lucide-react Star icon (filled vs outline)
+
+**RatingForm Component:**
+- Modal using shadcn Dialog
+- 5 rating dimensions: Overall (required), Plot, Acting, Cinematography, Score (optional)
+- Shows movie poster and title
+- Handles both new ratings and edits
+
+**RatingsContext (local state):**
+- Stores ratings in React Context (will move to Supabase in Module 8)
+- Functions: `saveRating`, `getRating`, `deleteRating`, `getAllRatings`
+- Each rating includes movie metadata for the watched list
+
+**Watched List Features:**
+- Sort by: date added, rating, title (A-Z / Z-A)
+- Delete with confirmation dialog
+- Empty state when no ratings
 
 **Checkpoint Quiz:**
 - How do you update one field in a form with multiple inputs?
 - What does "lifting state up" mean? When do you do it?
 - Walk through what happens when the user clicks submit.
+- What's the difference between `append_to_response` and making separate API calls?
 
-**Practical Challenge:** Add a "sort by" dropdown to the watched list (by overall rating, by date added).
+**Practical Challenge:** The sort functionality is already built in! Try adding a "favorites" filter.
 
 **Unlocked:** "Rating system complete! But there's a problem—refresh the page and your ratings vanish. Let's fix that."
 
