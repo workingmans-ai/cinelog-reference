@@ -10,7 +10,7 @@ This app serves as:
 
 ## Critical Constraint
 
-This app will be rebuilt by a beginner named Pablo as part of a 73-lesson course (see `/guidance/cinelog-course-structure.md`). Every architectural decision, pattern, and component must be:
+This app will be rebuilt by a beginner named Pablo as part of a 75-lesson course (see `/guidance/cinelog-course-structure.md`). Every architectural decision, pattern, and component must be:
 
 - **Teachable** — Can be explained in 20-40 minutes
 - **Incremental** — Can be built step-by-step
@@ -22,15 +22,32 @@ DO NOT add complexity beyond what's specified. If something isn't listed, don't 
 
 ### Features (Complete List)
 
-**1. Movie Search**
+**1. Movie Search (Three Modes)**
 
-- Search TMDB database by title, actor, or keyword
-- Filter by genre (dropdown)
-- Filter by year/decade (dropdown)
-- Show popular movies when no search query (default view)
-- Display results as card grid
-- Show: poster, title, year, genre badges
-- Click card to see movie details
+Due to TMDB API limitations (see `/guidance/cinelog-course-structure.md`), search is split into three modes:
+
+- **By Title Mode:**
+  - Search movies by title
+  - Optional year filter
+  - Uses `/search/movie` endpoint
+
+- **By Actor Mode:**
+  - Search movies featuring an actor
+  - Optional year filter
+  - Uses `/search/person` → `/person/{id}/movie_credits` (two-step)
+
+- **Discover Mode:**
+  - Browse by genre (dropdown)
+  - Filter by decade (dropdown)
+  - Sort by: popularity, rating, release date
+  - Filter by minimum rating
+  - Uses `/discover/movie` endpoint
+
+- **All modes:**
+  - Show popular movies on initial load
+  - Display results as card grid (poster, title, year, genre badges)
+  - "Load More" button to paginate results
+  - Click card to see movie details
 
 **2. Movie Details View**
 
@@ -86,13 +103,12 @@ DO NOT add complexity beyond what's specified. If something isn't listed, don't 
 ❌ User authentication/accounts
 ❌ Multiple users
 ❌ Social features (sharing, friends)
-❌ Advanced search (by director)
+❌ Search by director (actor search is included)
 ❌ Watchlist/want-to-watch list
 ❌ Movie reviews (text)
 ❌ Import/export data
 ❌ Dark mode toggle
-❌ Pagination (just show top 20 results)
-❌ Infinite scroll
+❌ Infinite scroll (we use "Load More" button instead)
 ❌ Caching/optimization
 ❌ Testing (unit, integration, e2e)
 ❌ Analytics
@@ -254,29 +270,48 @@ This is intentionally built manually to teach controlled components.
 ### SearchBar.jsx
 
 ```jsx
-// State:
-// - query: string (searches title, actor, or keyword)
-// - genre: string (selected genre filter)
-// - decade: string (selected decade filter)
+// State (three-mode architecture):
+// - mode: "title" | "actor" | "discover"
+// Title mode state:
+// - titleQuery: string
+// - titleYear: string
+// Actor mode state:
+// - actorQuery: string
+// - actorYear: string
+// Discover mode state:
+// - genre: string
+// - decade: string
+// - sortBy: string ("popularity.desc" | "vote_average.desc" | etc.)
+// - minRating: string ("0" | "6" | "7" | "8")
 
 // Props:
-// - onSearch: function({ query, genre, decade })
+// - genres: array of { id, name }
+// - onSearchByTitle: function({ query, year })
+// - onSearchByActor: function({ query, year })
+// - onDiscover: function({ genre, decade, sortBy, minRating })
 
 // Behavior:
-// - Text input for search query (placeholder: "Search by title, actor, or keyword...")
-// - Genre dropdown (All, Action, Comedy, Drama, etc.)
-// - Decade dropdown (All, 2020s, 2010s, 2000s, 1990s, etc.)
+// - Three mode toggle buttons at top: "By Title", "By Actor", "Discover"
+// - Each mode shows different inputs:
+//   - Title: text input + year dropdown
+//   - Actor: text input + year dropdown
+//   - Discover: genre, decade, sort, rating dropdowns
 // - Debounced search (300ms delay) - implemented manually with setTimeout/useEffect
-// - Empty query shows popular movies
 // - Uses shadcn Input and Select
 
 // Debounce implementation (manual, no library):
 // useEffect(() => {
 //   const timer = setTimeout(() => {
-//     onSearch({ query, genre, decade });
+//     if (mode === "title") {
+//       onSearchByTitle({ query: titleQuery, year: titleYear });
+//     } else if (mode === "actor") {
+//       onSearchByActor({ query: actorQuery, year: actorYear });
+//     } else {
+//       onDiscover({ genre, decade, sortBy, minRating });
+//     }
 //   }, 300);
 //   return () => clearTimeout(timer);
-// }, [query, genre, decade]);
+// }, [mode, titleQuery, titleYear, actorQuery, actorYear, genre, decade, sortBy, minRating]);
 ```
 
 ### RatingForm.jsx
@@ -331,25 +366,40 @@ This is intentionally built manually to teach controlled components.
 
 ```javascript
 // Environment: NEXT_PUBLIC_TMDB_API_KEY
-
-export async function searchMovies(query, filters = {}) {
-  // Returns: array of movie objects (max 20 results)
-  // Handles: empty query (returns popular movies)
-  // Handles: search by title, actor name, or keyword (uses TMDB multi-search)
-  // Handles: genre filter
-  // Handles: year/decade filter
-}
-
-export async function getPopularMovies() {
-  // Returns: array of currently popular movies (default view)
-}
-
-export async function getMovieDetails(movieId) {
-  // Returns: full movie object with runtime, overview, etc.
-}
+// All search functions return: { results, page, totalPages, hasMore }
 
 export async function getGenres() {
   // Returns: array of { id, name } for genre dropdown
+}
+
+export async function searchByTitle(query, year = "", page = 1) {
+  // Uses: /search/movie endpoint
+  // If no query, falls back to getPopularMovies()
+  // Returns: { results, page, totalPages, hasMore }
+}
+
+export async function searchByActor(query, year = "", page = 1) {
+  // Two-step process:
+  // Step 1: /search/person to find the actor
+  // Step 2: /person/{id}/movie_credits to get their movies
+  // Note: TMDB returns all credits at once, so we do client-side pagination
+  // Returns: { results, page, totalPages, hasMore }
+}
+
+export async function discoverMovies(filters = {}, page = 1) {
+  // Uses: /discover/movie endpoint
+  // Accepts: { genre, decade, sortBy, minRating }
+  // Returns: { results, page, totalPages, hasMore }
+}
+
+export async function getPopularMovies(page = 1) {
+  // Uses: /movie/popular endpoint
+  // Returns: { results, page, totalPages, hasMore }
+}
+
+export async function getMovieDetails(movieId) {
+  // Uses: /movie/{id} endpoint
+  // Returns: full movie object with runtime, overview, etc.
 }
 ```
 
@@ -589,10 +639,11 @@ Implement in this sequence to mirror the course:
 
 3. **TMDB integration**
 
-   - lib/tmdb.js functions
-   - SearchBar component
+   - lib/tmdb.js functions (searchByTitle, searchByActor, discoverMovies, getPopularMovies)
+   - SearchBar component with three modes (Title, Actor, Discover)
    - Fetch and display real movies
-   - Genre/decade filters
+   - Filters: year (title/actor modes), genre/decade/sort/rating (discover mode)
+   - "Load More" pagination
 
 4. **Rating system (local state)**
 
@@ -639,9 +690,13 @@ When complete, provide:
 
 Before considering the app complete:
 
-- [ ] Can search movies by title
-- [ ] Can filter by genre
-- [ ] Can filter by decade
+- [ ] Can search movies by title (By Title mode)
+- [ ] Can search movies by actor (By Actor mode)
+- [ ] Can filter by genre (Discover mode)
+- [ ] Can filter by decade (Discover mode)
+- [ ] Can sort by popularity/rating/date (Discover mode)
+- [ ] Can filter by minimum rating (Discover mode)
+- [ ] "Load More" pagination works in all modes
 - [ ] Movie cards display correctly
 - [ ] Can click movie to see details
 - [ ] Can rate a movie (all 5 dimensions)
@@ -666,7 +721,7 @@ This reference app is intentionally constrained to match the course (see `/guida
 | Course Module | What's Built in App |
 |---------------|---------------------|
 | Module 5 (React) | MovieCard, MovieGrid, basic components |
-| Module 6 (Search) | SearchBar, TMDB integration, filters |
+| Module 6 (Search) | SearchBar (3 modes), TMDB integration, filters, pagination |
 | Module 7 (Rating) | StarRating (manual), RatingForm, local state |
 | Module 8 (Persistence) | Supabase integration, CRUD operations |
 | Module 9 (AI) | Claude API, RecommendationPanel |

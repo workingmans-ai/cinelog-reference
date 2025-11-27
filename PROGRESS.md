@@ -66,10 +66,13 @@
 
 ## Validation Checklist
 
-- [ ] Can search movies by title
-- [ ] Can search by actor
-- [ ] Can filter by genre
-- [ ] Can filter by decade
+- [x] Can search movies by title (By Title mode)
+- [x] Can search movies by actor (By Actor mode)
+- [x] Can filter by genre (Discover mode)
+- [x] Can filter by decade (Discover mode)
+- [x] Can sort by popularity/rating/date (Discover mode)
+- [x] Can filter by minimum rating (Discover mode)
+- [x] "Load More" pagination works in all modes
 - [ ] Movie cards display correctly
 - [ ] Can click movie to see details
 - [ ] Can rate a movie (all 5 dimensions)
@@ -90,4 +93,20 @@
 
 ## Notes / Deviations
 
-_Document any changes from the original spec here._
+### Three Search Modes (Phase 3)
+
+**Original spec:** Single search with combined title/actor/keyword search + genre/decade filters
+
+**Implementation:** Three separate search modes due to TMDB API limitations:
+- `/search/movie` doesn't support genre filters
+- `/discover/movie` doesn't support text search
+
+**Solution:** Three distinct modes (Title, Actor, Discover) that each map cleanly to one API pattern. This is actually better for teaching—each mode is simple and self-contained.
+
+### Pagination (Phase 3)
+
+**Original spec:** "❌ NO pagination (just show top 20 results)"
+
+**Implementation:** Added "Load More" button to paginate results
+
+**Reason:** User requested better UX. "Load More" is a simple, beginner-friendly pattern (no infinite scroll complexity).

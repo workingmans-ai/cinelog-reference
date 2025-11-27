@@ -9,12 +9,43 @@
 **What Pablo Builds:** A personal movie tracker where he can search movies, rate them across multiple dimensions, and get AI-powered recommendations.
 
 **Final Feature Set:**
-- Search TMDB database (by title, genre, year, actor, popularity)
+- Search TMDB database with three modes:
+  - **By Title** — search movies by name with optional year filter
+  - **By Actor** — find movies featuring a specific actor with optional year filter
+  - **Discover** — browse by genre, decade, sort order, and minimum rating
+- "Load More" pagination to view additional results
 - Add movies to "Watched" list
 - Rate movies (1-5 stars): Overall (required), Plot, Acting, Cinematography, Score (optional)
 - View his rated movies in a clean gallery
 - Get AI recommendations based on a selected movie + his rating preferences
 - Deployed live on Vercel with Supabase persistence
+
+---
+
+## TMDB API Design Decisions
+
+> **Why three search modes instead of one?**
+
+During implementation, we discovered TMDB API limitations that forced architectural decisions:
+
+| TMDB Endpoint | What It Supports | What It Doesn't Support |
+|---------------|------------------|------------------------|
+| `/search/movie` | Text query, year | Genre, sort, rating filters |
+| `/search/person` | Person name lookup | — |
+| `/person/{id}/movie_credits` | All movies for an actor | Pagination (returns all at once) |
+| `/discover/movie` | Genre, decade, sort, rating | Text search |
+
+**The Problem:** You can't search "action movies with 'Batman' in the title" in a single API call.
+
+**The Solution:** Three distinct search modes, each optimized for one use case:
+1. **By Title** — Uses `/search/movie` + optional year filter
+2. **By Actor** — Uses `/search/person` → `/person/{id}/movie_credits` (two-step)
+3. **Discover** — Uses `/discover/movie` with genre, decade, sort, rating filters
+
+**Teaching Value:** This is a realistic scenario. APIs rarely do exactly what you want. Pablo learns to:
+- Read API documentation critically
+- Design around limitations
+- Build UX that maps cleanly to available APIs
 
 ---
 
@@ -95,9 +126,11 @@ cinelog-course/
 │   │   ├── 6.3-useeffect-intro/
 │   │   ├── 6.4-tmdb-api-setup/
 │   │   ├── 6.5-fetching-popular-movies/
-│   │   ├── 6.6-search-input/
-│   │   ├── 6.7-search-results/
-│   │   └── 6.8-adding-filters/
+│   │   ├── 6.6-understanding-tmdb-endpoints/
+│   │   ├── 6.7-search-by-title/
+│   │   ├── 6.8-search-by-actor/
+│   │   ├── 6.9-discover-mode/
+│   │   └── 6.10-load-more-pagination/
 │   │
 │   ├── module-7-rating-system/
 │   │   ├── 7.1-planning-the-rating-feature/
@@ -331,7 +364,54 @@ cinelog-course/
 ---
 
 ### Module 6: Building Search
-**Goal:** Pablo connects his UI to real movie data from the internet.
+**Goal:** Pablo connects his UI to real movie data from the internet using three search modes.
+
+#### What Is an API? (Conceptual Foundation)
+
+Before diving into code, Pablo needs to understand what an API is and why it matters:
+
+**The Restaurant Analogy:**
+```
+Imagine a restaurant. You (the customer) don't go into the kitchen
+and cook your own food. Instead, you use a menu to communicate
+what you want, and a waiter brings you the result.
+
+An API works the same way:
+- Your app (the customer) wants movie data
+- The API (the waiter) takes your request to the server (the kitchen)
+- The server prepares the data and sends it back through the API
+
+You never see the kitchen. You just use the menu (the API documentation)
+to ask for what you need.
+```
+
+**Why APIs Matter in Modern Development:**
+- Almost every app uses APIs to get data from somewhere else
+- You don't need to build a movie database—TMDB already has one
+- You don't need to train an AI—Claude's API provides intelligence
+- APIs let you focus on YOUR app while using others' expertise
+
+**How TMDB's API Shaped CineLog:**
+
+When we started building search, we discovered something important: the TMDB API doesn't do everything we wanted in one request. This is normal! APIs are designed for general use, not specifically for your app.
+
+```
+What we wanted:        What TMDB offers:
+───────────────        ─────────────────
+Search "Batman"        ✓ /search/movie (text search)
+  + Action genre       ✗ Can't filter by genre here!
+  + 2020s only         ✓ Can filter by year
+
+Browse Action films    ✓ /discover/movie (filters)
+  + sorted by rating   ✓ Can sort and filter
+  + no text search     ✗ Can't search by title here!
+```
+
+**The Lesson:** APIs have rules. You design your app around what the API can do—not the other way around. That's why CineLog has three search modes: each one uses a different API endpoint that does one thing well.
+
+This is real-world development. Pablo will encounter this pattern everywhere.
+
+---
 
 | Lesson | What Pablo Learns | What Pablo Does | Milestone |
 |--------|-------------------|-----------------|-----------|
@@ -340,18 +420,32 @@ cinelog-course/
 | 6.3 useEffect Intro | Side effects, useEffect basics, dependencies | Fetches data when component mounts | Data loads on page load |
 | 6.4 TMDB API Setup | API keys, environment variables, TMDB docs | Gets API key, stores in .env | API key is secure |
 | 6.5 Fetching Popular Movies | Putting it together: useEffect + fetch + TMDB | Fetches and displays popular movies | **Real movies appear!** |
-| 6.6 Search Input | Controlled input, updating state on type | Builds search bar, captures query | Types → query updates |
-| 6.7 Search Results | Fetching on query change, debouncing | Search query fetches matching movies | **Search works!** |
-| 6.8 Adding Filters | Multiple state values, filter UI | Adds genre dropdown filter | Filter by genre works |
+| 6.6 Understanding TMDB Endpoints | API limitations, why we need 3 search modes | Explores `/search/movie` vs `/discover/movie` | Understands API design |
+| 6.7 Search by Title | Mode toggle UI, controlled inputs, debouncing | Builds title search with year filter | **Title search works!** |
+| 6.8 Search by Actor | Two-step API calls, sequential async/await | Builds actor search (person → credits) | **Actor search works!** |
+| 6.9 Discover Mode | Multiple filters, useEffect dependencies | Builds discover with genre, decade, sort, rating | **Discover works!** |
+| 6.10 Load More Pagination | Tracking page state, appending results | Adds "Load More" button | Can load more results |
 
 **Checkpoint Quiz:**
 - What does `async/await` do?
 - Why do we use environment variables for API keys?
 - What happens if you forget the dependency array in useEffect?
+- Why can't we combine text search with genre filters in a single API call?
 
-**Practical Challenge:** Add a "year" filter that only shows movies from a selected decade.
+**Key Teaching Moment — API Limitations:**
+```
+"TMDB has two main search endpoints:
+- /search/movie — finds movies by title, but doesn't support genre filters
+- /discover/movie — supports genre, decade, sort, etc., but no text search
 
-**Unlocked:** "Your app now pulls from a database of millions of movies. It's real. It's connected to the world."
+This is a common real-world scenario: APIs don't always do everything
+you want. The solution? Build separate search modes for each use case.
+That's why we have three tabs: Title, Actor, and Discover."
+```
+
+**Practical Challenge:** Try adding a "language" filter to the Discover mode.
+
+**Unlocked:** "Your app now pulls from a database of millions of movies with three powerful search modes. It's real. It's connected to the world."
 
 ---
 
@@ -495,7 +589,7 @@ Each lesson follows this pattern (20-40 minutes):
 | 3 | Can track changes with Git, code is on GitHub |
 | 4 | Can style rapidly with Tailwind |
 | 5 | Can build interactive React components |
-| 6 | **SEARCH WORKS** - finds real movies from TMDB |
+| 6 | **SEARCH WORKS** - 3 search modes (title, actor, discover) + pagination |
 | 7 | **RATING WORKS** - can rate movies on 5 dimensions |
 | 8 | **DATA PERSISTS** - ratings survive refresh |
 | 9 | **AI WORKS** - personalized recommendations with explanations |
@@ -571,14 +665,14 @@ After each lesson, Claude updates:
 | 3. Git | 5 | Version control |
 | 4. Tailwind | 5 | Utility CSS |
 | 5. React | 10 | Component fundamentals |
-| 6. Search | 8 | API integration |
+| 6. Search | 10 | API integration (3 modes + pagination) |
 | 7. Rating | 7 | Core feature |
 | 8. Persistence | 7 | Database |
 | 9. AI | 6 | Intelligence |
 | 10. Deploy | 6 | Polish & ship |
-| **Total** | **73 lessons** | |
+| **Total** | **75 lessons** | |
 
-At ~30 min/lesson average: ~36 hours of learning
+At ~30 min/lesson average: ~37 hours of learning
 At 1 lesson/day: ~2.5 months
 At 2 lessons/day: ~5 weeks
 *(But it's self-paced—no pressure!)*
