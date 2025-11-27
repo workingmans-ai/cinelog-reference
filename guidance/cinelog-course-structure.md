@@ -530,6 +530,48 @@ This pattern is common in REST APIs. Pablo learns to read API docs for efficienc
 ### Module 8: Data Persistence
 **Goal:** Pablo's data survives page refreshes by storing it in a real database.
 
+#### What Is a Database? (Conceptual Foundation)
+
+Before Pablo writes any database code, he needs to understand the core concepts:
+
+**The Spreadsheet Analogy:**
+A database is like a collection of spreadsheets (called **tables**). Each spreadsheet has:
+- **Columns** — The headers (like "Title", "Year", "Rating")
+- **Rows** — Individual entries (like one movie or one rating)
+- **Cells** — Where a specific row meets a specific column
+
+**Example: Our `movies` table is like this spreadsheet:**
+```
+| id  | title        | year | poster_path | genres              |
+|-----|--------------|------|-------------|---------------------|
+| 550 | Fight Club   | 1999 | /pB8BM...   | ["Drama","Thriller"]|
+| 238 | The Godfather| 1972 | /3bhkr...   | ["Drama","Crime"]   |
+```
+
+**What Is SQL?**
+SQL (Structured Query Language) is how you talk to databases. It's like giving instructions:
+- `SELECT * FROM movies` → "Show me everything from the movies spreadsheet"
+- `INSERT INTO movies ...` → "Add a new row to movies"
+- `UPDATE movies SET year = 2000 WHERE id = 550` → "Change the year to 2000 for movie #550"
+- `DELETE FROM movies WHERE id = 550` → "Remove movie #550"
+
+**Why Supabase?**
+Supabase gives us a real PostgreSQL database with:
+- A visual dashboard (like looking at the spreadsheet)
+- A JavaScript library (so our React code can talk to it)
+- Built-in security rules
+- Free tier for learning
+
+**Key Terms Pablo Will Use:**
+| Term | Meaning | Example |
+|------|---------|---------|
+| Table | A collection of related data | `movies`, `ratings` |
+| Row | One entry in a table | One movie's data |
+| Column | One attribute | `title`, `year`, `rating` |
+| Primary Key | Unique identifier for each row | `id` column |
+| Foreign Key | Links one table to another | `movie_id` in ratings → `id` in movies |
+| Query | A request to the database | `SELECT * FROM movies` |
+
 | Lesson | What Pablo Learns | What Pablo Does | Milestone |
 |--------|-------------------|-----------------|-----------|
 | 8.1 Why We Need a Database | Client vs server storage, persistence | Identifies what data needs to persist | Understands the problem |
@@ -539,6 +581,30 @@ This pattern is common in REST APIs. Pablo learns to read API docs for efficienc
 | 8.5 Reading Data | SELECT operations, loading on mount | Loads watched list from database | Page loads saved ratings |
 | 8.6 Updating and Deleting | UPDATE, DELETE operations | Adds edit/delete functionality | Can modify/remove ratings |
 | 8.7 Wiring It Together | Replacing local state with database | Full integration | **Data persists across sessions!** |
+
+#### Design Decision: Where Does Movie Data Come From?
+
+> **Question Pablo might ask:** "If we save movies to Supabase, why does the movie detail page still call TMDB?"
+
+**The Design:**
+- **Movie detail page** → Always fetches from TMDB API
+- **Watched list page** → Uses cached data from Supabase
+
+**Why not check Supabase first, then fall back to TMDB?**
+
+1. **Simpler code** — No "check cache, then maybe fetch" logic. Each page has one clear data source.
+2. **Always fresh** — TMDB data can change (ratings, descriptions). The detail page always shows current info.
+3. **The cache serves its purpose** — Without it, loading 20 rated movies on the watched list would require 20 separate TMDB API calls. The Supabase cache eliminates this.
+
+**Teaching moment:** This is a pragmatic tradeoff. We could build a smarter caching system, but it would add complexity without much benefit. In real-world development, "good enough" often beats "perfect but complicated."
+
+**The pattern:**
+```
+Movie Detail Page:  User visits → Fetch from TMDB → Display
+                    User rates  → Save to TMDB cache + ratings table
+
+Watched List Page:  User visits → Load from Supabase (ratings + cached movies) → Display
+```
 
 **Checkpoint Quiz:**
 - What's the difference between a table and a row?

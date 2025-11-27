@@ -2,9 +2,9 @@
 
 > **Last Updated:** 2025-11-27
 >
-> **Current Phase:** 4 - Rating System (Complete)
+> **Current Phase:** 5 - Database Integration (Complete)
 >
-> **Status:** Phase 4 complete with local state. Ready for Phase 5 (Database).
+> **Status:** Phase 5 complete. Ratings now persist to Supabase. Ready for Phase 6 (AI Recommendations).
 
 ---
 
@@ -43,11 +43,11 @@
 
 ## Phase 5: Database Integration
 
-- [ ] Create supabase/schema.sql
-- [ ] Create lib/supabase.js functions
-- [ ] Wire up rating persistence (save/load)
-- [ ] Build Watched List page with sort/edit/delete
-- [ ] Create supabase/seed.sql with sample data
+- [x] Create supabase/schema.sql
+- [x] Create lib/supabase.js functions
+- [x] Wire up rating persistence (save/load)
+- [x] Update RatingsContext to use Supabase
+- [x] Create supabase/seed.sql with sample data
 
 ## Phase 6: AI Recommendations
 
@@ -75,15 +75,15 @@
 - [x] Can sort by popularity/rating/date (Discover mode)
 - [x] Can filter by minimum rating (Discover mode)
 - [x] "Load More" pagination works in all modes
-- [ ] Movie cards display correctly
-- [ ] Can click movie to see details
-- [ ] Can rate a movie (all 5 dimensions)
-- [ ] Overall rating is required, others optional
-- [ ] Ratings persist in Supabase
-- [ ] Watched list shows all ratings
-- [ ] Can sort watched list
-- [ ] Can edit existing rating
-- [ ] Can delete rating
+- [x] Movie cards display correctly
+- [x] Can click movie to see details
+- [x] Can rate a movie (all 5 dimensions)
+- [x] Overall rating is required, others optional
+- [x] Ratings persist in Supabase
+- [x] Watched list shows all ratings
+- [x] Can sort watched list
+- [x] Can edit existing rating
+- [x] Can delete rating
 - [ ] AI recommendations work
 - [ ] Recommendations include explanations
 - [ ] App is responsive (mobile/tablet/desktop)

@@ -54,6 +54,8 @@ export default function MoviePage() {
       poster_path: movie.poster_path,
       release_date: movie.release_date,
       genres: movie.genres,
+      overview: movie.overview,
+      runtime: movie.runtime,
     });
     setShowRatingForm(false);
   }
