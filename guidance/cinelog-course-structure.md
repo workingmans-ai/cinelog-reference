@@ -1,0 +1,771 @@
+# CineLog: Pablo's Movie Tracker Course
+## Revised Course Structure & Milestone Overview (v2)
+
+---
+
+## Project Overview
+
+**App Name:** CineLog  
+**What Pablo Builds:** A personal movie tracker where he can search movies, rate them across multiple dimensions, and get AI-powered recommendations.
+
+**Final Feature Set:**
+- Search TMDB database (by title, genre, year, actor, popularity)
+- Add movies to "Watched" list
+- Rate movies (1-5 stars): Overall (required), Plot, Acting, Cinematography, Score (optional)
+- View his rated movies in a clean gallery
+- Get AI recommendations based on a selected movie + his rating preferences
+- Deployed live on Vercel with Supabase persistence
+
+---
+
+## Course Philosophy
+
+- **Self-paced:** No deadlines, no pressure. Progress measured by lessons completed, not time elapsed.
+- **Small wins:** Lessons are bite-sized (20-40 min). Each one unlocks something visible or tangible.
+- **Foundations first:** We spend time on HTML, CSS, JavaScript, and Git before React. This prevents "magic box" confusion later.
+- **Build understanding, not just code:** Pablo should be able to explain what his code does, not just copy it.
+
+---
+
+## Course File Structure
+
+```
+cinelog-course/
+├── .claude/
+│   └── commands/                    # Slash commands to start lessons
+│       ├── start-0-1.md
+│       ├── start-1-1.md
+│       └── ... (one per lesson)
+│
+├── course-content/
+│   ├── module-0-welcome/
+│   │   ├── 0.1-what-youll-build/
+│   │   ├── 0.2-the-architecture-map/
+│   │   └── 0.3-environment-setup/
+│   │
+│   ├── module-1-html-css-refresher/
+│   │   ├── 1.1-html-structure/
+│   │   ├── 1.2-css-selectors-properties/
+│   │   ├── 1.3-box-model/
+│   │   ├── 1.4-flexbox-basics/
+│   │   ├── 1.5-responsive-basics/
+│   │   └── 1.6-static-movie-card/
+│   │
+│   ├── module-2-javascript-fundamentals/
+│   │   ├── 2.1-variables-and-types/
+│   │   ├── 2.2-functions-basics/
+│   │   ├── 2.3-functions-arguments-return/
+│   │   ├── 2.4-scope/
+│   │   ├── 2.5-string-manipulation/
+│   │   ├── 2.6-arrays-basics/
+│   │   ├── 2.7-array-methods/
+│   │   ├── 2.8-loops-to-map-filter/
+│   │   ├── 2.9-objects/
+│   │   └── 2.10-mini-project-data-wrangling/
+│   │
+│   ├── module-3-git-fundamentals/
+│   │   ├── 3.1-what-is-version-control/
+│   │   ├── 3.2-git-init-add-commit/
+│   │   ├── 3.3-writing-good-commits/
+│   │   ├── 3.4-viewing-history/
+│   │   └── 3.5-github-basics/
+│   │
+│   ├── module-4-tailwind-and-components/
+│   │   ├── 4.1-what-is-tailwind/
+│   │   ├── 4.2-utility-classes/
+│   │   ├── 4.3-layout-with-tailwind/
+│   │   ├── 4.4-responsive-with-tailwind/
+│   │   └── 4.5-rebuild-movie-card-tailwind/
+│   │
+│   ├── module-5-react-fundamentals/
+│   │   ├── 5.1-what-is-react/
+│   │   ├── 5.2-your-first-component/
+│   │   ├── 5.3-jsx-syntax/
+│   │   ├── 5.4-props-passing-data/
+│   │   ├── 5.5-rendering-lists/
+│   │   ├── 5.6-state-intro/
+│   │   ├── 5.7-usestate-in-action/
+│   │   ├── 5.8-events-onclick/
+│   │   ├── 5.9-events-forms/
+│   │   └── 5.10-component-composition/
+│   │
+│   ├── module-6-building-search/
+│   │   ├── 6.1-what-is-an-api/
+│   │   ├── 6.2-fetch-and-async-await/
+│   │   ├── 6.3-useeffect-intro/
+│   │   ├── 6.4-tmdb-api-setup/
+│   │   ├── 6.5-fetching-popular-movies/
+│   │   ├── 6.6-search-input/
+│   │   ├── 6.7-search-results/
+│   │   └── 6.8-adding-filters/
+│   │
+│   ├── module-7-rating-system/
+│   │   ├── 7.1-planning-the-rating-feature/
+│   │   ├── 7.2-star-rating-component/
+│   │   ├── 7.3-rating-form-layout/
+│   │   ├── 7.4-form-state-management/
+│   │   ├── 7.5-saving-to-local-state/
+│   │   ├── 7.6-watched-list-page/
+│   │   └── 7.7-movie-detail-view/
+│   │
+│   ├── module-8-data-persistence/
+│   │   ├── 8.1-why-we-need-a-database/
+│   │   ├── 8.2-supabase-setup/
+│   │   ├── 8.3-creating-tables/
+│   │   ├── 8.4-inserting-data/
+│   │   ├── 8.5-reading-data/
+│   │   ├── 8.6-updating-and-deleting/
+│   │   └── 8.7-wiring-it-together/
+│   │
+│   ├── module-9-ai-recommendations/
+│   │   ├── 9.1-how-ai-apis-work/
+│   │   ├── 9.2-your-first-ai-call/
+│   │   ├── 9.3-prompt-engineering-basics/
+│   │   ├── 9.4-building-context-from-ratings/
+│   │   ├── 9.5-recommendation-ui/
+│   │   └── 9.6-displaying-explanations/
+│   │
+│   └── module-10-polish-and-deploy/
+│       ├── 10.1-loading-states/
+│       ├── 10.2-error-handling/
+│       ├── 10.3-responsive-polish/
+│       ├── 10.4-final-touches/
+│       ├── 10.5-deploying-to-vercel/
+│       └── 10.6-celebration-and-next-steps/
+│
+├── project-context/
+│   ├── APP_VISION.md                # What CineLog is, Pablo's role as builder
+│   ├── ARCHITECTURE_MAP.md          # Visual overview of how pieces connect
+│   ├── TECH_STACK.md                # Why we chose each technology
+│   ├── FEATURE_ROADMAP.md           # What gets built when (motivation)
+│   └── GLOSSARY.md                  # Terms + analogies Pablo will encounter
+│
+├── practice-exercises/              # Standalone exercises for each module
+│   ├── html-css/
+│   ├── javascript/
+│   ├── git/
+│   └── react/
+│
+├── cinelog-app/                     # The actual app Pablo builds
+│   ├── .gitignore
+│   ├── package.json
+│   ├── next.config.js
+│   ├── tailwind.config.js
+│   ├── .env.example
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   └── lib/
+│   └── README.md
+│
+├── mentor-notes/                    # For you (hidden from Pablo)
+│   ├── .gitignore
+│   ├── progress-log.md
+│   ├── struggles.md
+│   ├── wins.md
+│   └── recommendations.md
+│
+└── CLAUDE.md                        # Root project memory + guardrails
+```
+
+---
+
+## Module Breakdown
+
+---
+
+### Module 0: Welcome & The Big Picture
+**Goal:** Pablo sees the destination and understands (at a high level) how all the pieces connect.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 0.1 What You'll Build | Tour of the finished app, features overview | Explores a demo of the completed CineLog | Can describe what the app does |
+| 0.2 The Architecture Map | How frontend, backend, database, and AI connect. Logic vs presentation. | Draws/labels a diagram of the app's architecture | Can explain how data flows through the app |
+| 0.3 Environment Setup | Terminal basics, Node.js, npm, VS Code | Installs tools, opens terminal, runs first command | Can navigate folders and run `node -v` |
+
+**Checkpoint:** Explain in your own words: what's the difference between the frontend and the backend? Where do Pablo's movie ratings "live"?
+
+**Unlocked:** "You now have the map. You know where we're going and how the pieces fit. Let's start building the skills."
+
+---
+
+### Module 1: HTML & CSS Refresher
+**Goal:** Pablo can read and write HTML/CSS confidently. This makes Tailwind intuitive later.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 1.1 HTML Structure | Elements, tags, nesting, semantic HTML | Builds a simple page with header, main, footer | Valid HTML page renders |
+| 1.2 CSS Selectors & Properties | Selectors, properties, values, linking CSS | Styles the page with colors, fonts | Page has custom styling |
+| 1.3 The Box Model | Margin, padding, border, width/height | Adds spacing and borders to elements | Understands why things have gaps |
+| 1.4 Flexbox Basics | display: flex, justify-content, align-items | Creates a horizontal nav bar | Items align as expected |
+| 1.5 Responsive Basics | Media queries, mobile-first thinking | Makes the nav stack on small screens | Page adapts to window size |
+| 1.6 Static Movie Card | Combining all concepts | Builds a movie card with HTML/CSS (no JS) | **Beautiful static card!** |
+
+**Checkpoint Quiz:**
+- What's the difference between margin and padding?
+- How do you center something with flexbox?
+- Write a media query that changes background color on screens under 600px.
+
+**Analogy Bank:**
+- Box model = a picture frame (content is the picture, padding is the mat, border is the frame, margin is wall space)
+- Flexbox = arranging items on a shelf (you control direction and spacing)
+
+**Unlocked:** "You just built a movie card from scratch. This is exactly what CineLog's UI will look like—but soon, we'll generate these dynamically."
+
+---
+
+### Module 2: JavaScript Fundamentals
+**Goal:** Pablo has the JS toolkit needed for React—variables, functions, arrays, objects, and functional patterns.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 2.1 Variables & Types | let, const, strings, numbers, booleans | Declares variables, checks types | Can predict what `typeof` returns |
+| 2.2 Functions Basics | Declaring functions, calling them | Writes functions that log messages | Functions run when called |
+| 2.3 Arguments & Return | Parameters, arguments, return values | Writes a function that takes input and returns output | `add(2, 3)` returns `5` |
+| 2.4 Scope | Global vs local, block scope, closures intro | Predicts which variable is accessible where | Can explain why a variable is "not defined" |
+| 2.5 String Manipulation | .length, .slice(), .toLowerCase(), template literals | Manipulates movie titles (truncate, format) | Formats strings correctly |
+| 2.6 Arrays Basics | Creating arrays, accessing by index, .length | Creates array of movie titles, accesses items | Can get first/last item |
+| 2.7 Array Methods | .push(), .pop(), .includes(), .indexOf() | Adds/removes movies from a list | List updates correctly |
+| 2.8 Loops to Map & Filter | for loops → forEach → map → filter | Transforms an array of movies (get titles, filter by year) | Uses map/filter confidently |
+| 2.9 Objects | Key-value pairs, accessing properties, nesting | Creates a movie object with title, year, rating | Can access nested properties |
+| 2.10 Mini Project | Combining arrays + objects + functions | Writes functions to filter/sort a movie dataset | **Working data manipulation!** |
+
+**Checkpoint Quiz:**
+- What's the difference between `let` and `const`?
+- What does `.map()` return? How is it different from `.forEach()`?
+- Given an array of movie objects, write a function that returns only movies rated above 4.
+
+**Analogy Bank:**
+- Variables = labeled boxes that hold things
+- Functions = recipes (ingredients in, dish out)
+- Scope = rooms in a house (what's visible depends on which room you're in)
+- Arrays = a playlist (ordered, numbered)
+- Objects = a contact card (labeled info about one thing)
+- Map = a factory assembly line (something goes in, something comes out for each item)
+
+**Unlocked:** "You can now manipulate data like a programmer. This is exactly what React does under the hood—it maps data to UI."
+
+---
+
+### Module 3: Git Fundamentals
+**Goal:** Pablo understands version control and can commit meaningful changes.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 3.1 What Is Version Control? | Why Git exists, snapshots, history | Explores a repo's commit history on GitHub | Understands "save points" concept |
+| 3.2 Git Init, Add, Commit | Initializing a repo, staging, committing | Creates a repo, makes first commit | First commit appears in `git log` |
+| 3.3 Writing Good Commits | Why messages matter, conventional format | Rewrites bad commit messages to be good | Can write clear, descriptive commits |
+| 3.4 Viewing History | git log, git diff, git status | Explores history, sees what changed | Can find when a change was made |
+| 3.5 GitHub Basics | Remote repos, push, pull, cloning | Pushes local repo to GitHub | **Code is on GitHub!** |
+
+**Checkpoint Quiz:**
+- What's the difference between `git add` and `git commit`?
+- Why is "fixed stuff" a bad commit message?
+- What does `git status` show you?
+
+**Practical Exercise:** Given 5 terrible commit messages, rewrite them to be helpful.
+
+**Analogy Bank:**
+- Git = save points in a video game (you can always go back)
+- Staging = packing a box before shipping (decide what goes in this shipment)
+- Commit message = a note to future-you explaining what you did
+
+**Unlocked:** "You now have a safety net. Every change you make can be tracked, explained, and undone if needed."
+
+---
+
+### Module 4: Tailwind CSS
+**Goal:** Pablo can style rapidly with utility classes, understanding how Tailwind maps to CSS concepts he already knows.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 4.1 What Is Tailwind? | Utility-first CSS, why it exists | Compares traditional CSS to Tailwind | Understands the trade-off |
+| 4.2 Utility Classes | Spacing, colors, typography classes | Styles text and boxes with Tailwind | Styled elements without writing CSS |
+| 4.3 Layout with Tailwind | Flex, grid, gap, justify, align | Recreates flexbox layouts with classes | Same layouts, less code |
+| 4.4 Responsive with Tailwind | Breakpoint prefixes (sm:, md:, lg:) | Makes a layout responsive | Layout adapts to screen size |
+| 4.5 Rebuild Movie Card | All Tailwind concepts together | Rebuilds Lesson 1.6's card using Tailwind | **Same card, pure Tailwind!** |
+
+**Checkpoint Quiz:**
+- What does `p-4` do? What about `mt-2`?
+- How do you make something only visible on large screens?
+- What's the Tailwind equivalent of `display: flex; justify-content: space-between;`?
+
+**Analogy Bank:**
+- Tailwind classes = LEGO bricks with specific shapes (snap them together to build)
+- Responsive prefixes = "only apply this when..." instructions
+
+**Unlocked:** "You can now style at the speed of thought. No more switching between HTML and CSS files—it's all inline and fast."
+
+---
+
+### Module 5: React Fundamentals
+**Goal:** Pablo understands React's mental model and can build interactive components.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 5.1 What Is React? | Components, declarative UI, virtual DOM | Reads explanation, watches component re-render | Can explain why React exists |
+| 5.2 Your First Component | Function components, return JSX | Creates `MovieCard` component | Component renders on screen |
+| 5.3 JSX Syntax | JSX rules, expressions in {}, className | Adds dynamic content to component | Shows calculated values in UI |
+| 5.4 Props: Passing Data | Props as function arguments | Makes `MovieCard` accept title, year, poster | One component, different data |
+| 5.5 Rendering Lists | .map() in JSX, keys | Renders array of movies as cards | Grid of movie cards appears |
+| 5.6 State Intro | Why we need state, mental model | Identifies what should be state in examples | Can distinguish props vs state |
+| 5.7 useState in Action | useState hook, setter functions | Adds "liked" toggle to MovieCard | Heart icon toggles on click |
+| 5.8 Events: onClick | Event handlers, passing functions | Adds click handler to button | Button click triggers action |
+| 5.9 Events: Forms | Controlled inputs, onChange | Builds input that tracks what's typed | Types → sees value update |
+| 5.10 Component Composition | Breaking UI into pieces, children | Refactors MovieCard into smaller parts | Cleaner, reusable components |
+
+**Checkpoint Quiz:**
+- What's the difference between props and state?
+- When does a component re-render?
+- Why do we need keys when rendering lists?
+- Build a counter component with + and - buttons (from memory).
+
+**Analogy Bank:**
+- Components = LEGO bricks (reusable, composable)
+- Props = settings passed when using a component (like function arguments)
+- State = the component's memory (changes trigger re-renders)
+- Re-render = React repainting the screen
+
+**Unlocked:** "You can now build interactive UIs. The search bar, rating stars, movie grid—you have all the building blocks."
+
+---
+
+### Module 6: Building Search
+**Goal:** Pablo connects his UI to real movie data from the internet.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 6.1 What Is an API? | Client-server model, HTTP, JSON | Explores an API response in browser | Understands request/response |
+| 6.2 Fetch and Async/Await | fetch(), promises, async/await syntax | Fetches data from a joke API | Data appears in console |
+| 6.3 useEffect Intro | Side effects, useEffect basics, dependencies | Fetches data when component mounts | Data loads on page load |
+| 6.4 TMDB API Setup | API keys, environment variables, TMDB docs | Gets API key, stores in .env | API key is secure |
+| 6.5 Fetching Popular Movies | Putting it together: useEffect + fetch + TMDB | Fetches and displays popular movies | **Real movies appear!** |
+| 6.6 Search Input | Controlled input, updating state on type | Builds search bar, captures query | Types → query updates |
+| 6.7 Search Results | Fetching on query change, debouncing | Search query fetches matching movies | **Search works!** |
+| 6.8 Adding Filters | Multiple state values, filter UI | Adds genre dropdown filter | Filter by genre works |
+
+**Checkpoint Quiz:**
+- What does `async/await` do?
+- Why do we use environment variables for API keys?
+- What happens if you forget the dependency array in useEffect?
+
+**Practical Challenge:** Add a "year" filter that only shows movies from a selected decade.
+
+**Unlocked:** "Your app now pulls from a database of millions of movies. It's real. It's connected to the world."
+
+---
+
+### Module 7: Rating System
+**Goal:** Pablo builds the core feature—rating movies across multiple dimensions.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 7.1 Planning the Feature | Breaking features into components and state | Sketches UI, identifies state needed | Has a plan before coding |
+| 7.2 Star Rating Component | Controlled component, hover states | Builds reusable `StarRating` | Click stars 1-5, see them fill |
+| 7.3 Rating Form Layout | Form structure, multiple inputs | Lays out rating form with all 5 dimensions | Form looks complete |
+| 7.4 Form State Management | Managing multiple state values | Wires up form inputs to state | Form values update correctly |
+| 7.5 Saving to Local State | Adding to array state, lifting state | Submit adds rating to watched list | **Movie rated and saved!** |
+| 7.6 Watched List Page | New route, displaying saved data | Creates page showing all rated movies | Sees all ratings in gallery |
+| 7.7 Movie Detail View | Showing details, edit/delete | Click movie → see full details and rating | Can review past ratings |
+
+**Checkpoint Quiz:**
+- How do you update one field in a form with multiple inputs?
+- What does "lifting state up" mean? When do you do it?
+- Walk through what happens when the user clicks submit.
+
+**Practical Challenge:** Add a "sort by" dropdown to the watched list (by overall rating, by date added).
+
+**Unlocked:** "Rating system complete! But there's a problem—refresh the page and your ratings vanish. Let's fix that."
+
+---
+
+### Module 8: Data Persistence
+**Goal:** Pablo's data survives page refreshes by storing it in a real database.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 8.1 Why We Need a Database | Client vs server storage, persistence | Identifies what data needs to persist | Understands the problem |
+| 8.2 Supabase Setup | Creating account, dashboard tour | Creates Supabase project | Dashboard is accessible |
+| 8.3 Creating Tables | Tables, columns, data types, primary keys | Creates `movies` and `ratings` tables | Tables exist in Supabase |
+| 8.4 Inserting Data | Supabase client, INSERT operations | Wires submit to save to database | Submit → data in Supabase |
+| 8.5 Reading Data | SELECT operations, loading on mount | Loads watched list from database | Page loads saved ratings |
+| 8.6 Updating and Deleting | UPDATE, DELETE operations | Adds edit/delete functionality | Can modify/remove ratings |
+| 8.7 Wiring It Together | Replacing local state with database | Full integration | **Data persists across sessions!** |
+
+**Checkpoint Quiz:**
+- What's the difference between a table and a row?
+- Why do we load data in useEffect?
+- What SQL operation adds a new row?
+
+**Practical Challenge:** Add a "favorite" boolean to ratings. Toggle it from the watched list.
+
+**Unlocked:** "Your app has a real backend. Close the browser, come back tomorrow—your data is still there."
+
+---
+
+### Module 9: AI Recommendations
+**Goal:** Pablo integrates AI to make personalized movie recommendations.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 9.1 How AI APIs Work | LLMs, prompts, tokens, API calls | Reads explanation, sees example calls | Understands the pattern |
+| 9.2 Your First AI Call | Calling Claude API, handling response | Sends simple prompt, gets response | AI response in console |
+| 9.3 Prompt Engineering Basics | Clear instructions, context, examples | Experiments with prompt variations | Sees how prompts affect output |
+| 9.4 Building Context from Ratings | Structuring Pablo's ratings as context | Crafts prompt with movie + ratings | AI "knows" Pablo's taste |
+| 9.5 Recommendation UI | Button, loading state, displaying results | Builds "Get Recommendations" feature | Click → see recommendations |
+| 9.6 Displaying Explanations | Parsing AI response, markdown | Shows why each movie was recommended | **Personalized recs with reasons!** |
+
+**Checkpoint Quiz:**
+- What context do we send to make recommendations relevant?
+- Why do AI requests take longer than database requests?
+- How would you modify the prompt to only get comedy recommendations?
+
+**Practical Challenge:** Add a "mood" input that influences recommendations ("I want something uplifting").
+
+**Unlocked:** "Your app thinks. It understands your taste and explains its reasoning. This is genuinely intelligent software."
+
+---
+
+### Module 10: Polish & Deploy
+**Goal:** Pablo ships a production-quality app to the real internet.
+
+| Lesson | What Pablo Learns | What Pablo Does | Milestone |
+|--------|-------------------|-----------------|-----------|
+| 10.1 Loading States | Skeleton screens, spinners, UX | Adds loading indicators everywhere | No jarring blank screens |
+| 10.2 Error Handling | try/catch, error boundaries, messages | Handles failures gracefully | App doesn't crash on errors |
+| 10.3 Responsive Polish | Testing on devices, fixing breakpoints | Makes every screen mobile-friendly | Looks great on phone |
+| 10.4 Final Touches | Code cleanup, accessibility basics | Reviews and polishes | Code is clean and commented |
+| 10.5 Deploying to Vercel | Git push, Vercel setup, env vars | Deploys to production | **APP IS LIVE!** 🎉 |
+| 10.6 Celebration & Next Steps | Review journey, discuss future learning | Reflects on what was built | Has a roadmap forward |
+
+**Checkpoint Quiz:**
+- Why is error handling important for user experience?
+- What's different about environment variables in production?
+- What happens automatically when you push to main now?
+
+**Final Deliverable:** Pablo shares his live URL. The app works. It's on the internet. He built it.
+
+---
+
+## Lesson Structure Template
+
+Each lesson follows this pattern (20-40 minutes):
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. CONTEXT (2-3 min)                                       │
+│     - Where we are in the course/app                        │
+│     - What this lesson unlocks                              │
+│     - Quick analogy to frame the concept                    │
+├─────────────────────────────────────────────────────────────┤
+│  2. CONCEPT (5-10 min)                                      │
+│     - Explain the new idea clearly                          │
+│     - Show a minimal example (not app code yet)             │
+│     - Socratic check: "What do you think happens if...?"    │
+├─────────────────────────────────────────────────────────────┤
+│  3. APPLY (10-20 min)                                       │
+│     - Pablo writes code (exercises or app)                  │
+│     - Claude guides but doesn't write for him               │
+│     - Stuck protocol: hints → smaller task → show solution  │
+│     - Time reference: "If stuck 15-20 min, ask for help"    │
+├─────────────────────────────────────────────────────────────┤
+│  4. CHECKPOINT (3-5 min)                                    │
+│     - 1-2 quiz questions (must pass to proceed)             │
+│     - "Explain in your own words" prompt                    │
+│     - Quick prediction exercise                             │
+├─────────────────────────────────────────────────────────────┤
+│  5. SAVE POINT                                              │
+│     - Summary: "You learned X and can now do Y"             │
+│     - Feature unlocked (if applicable)                      │
+│     - Git commit with descriptive message                   │
+│     - Preview of next lesson                                │
+│     - Mentor notes updated                                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Progress Milestones (What "Unlocks")
+
+| After Module | What Works / What Pablo Can Do |
+|--------------|--------------------------------|
+| 0 | Understands the full journey, has dev environment ready |
+| 1 | Can build and style static UI with HTML/CSS |
+| 2 | Can manipulate data with JavaScript (filter, map, transform) |
+| 3 | Can track changes with Git, code is on GitHub |
+| 4 | Can style rapidly with Tailwind |
+| 5 | Can build interactive React components |
+| 6 | **SEARCH WORKS** - finds real movies from TMDB |
+| 7 | **RATING WORKS** - can rate movies on 5 dimensions |
+| 8 | **DATA PERSISTS** - ratings survive refresh |
+| 9 | **AI WORKS** - personalized recommendations with explanations |
+| 10 | **DEPLOYED** - live app on the internet! |
+
+---
+
+## Mentor Notes Structure
+
+After each lesson, Claude updates:
+
+### `progress-log.md`
+```markdown
+## Lesson 2.8: Loops to Map & Filter
+
+**Status:** Complete
+**Estimated Duration:** ~35 minutes
+
+**Concepts Covered:**
+- for loops ✓
+- forEach ✓  
+- map (solid understanding)
+- filter (needed extra example)
+
+**Commits:** "Add data filtering functions"
+**Next:** 2.9 Objects
+```
+
+### `struggles.md`
+```markdown
+## Array Methods (Lesson 2.7-2.8)
+- Confused about when map vs filter
+- Helpful reframe: "map = transform each, filter = keep some"
+- Took 2 attempts to write filter correctly
+
+## Callback Functions (Lesson 2.8)
+- Arrow function syntax was confusing initially
+- Clicked after seeing: "the arrow separates input from output"
+```
+
+### `wins.md`
+```markdown
+## HTML Structure (Lesson 1.1)
+- Immediately understood nesting
+- Made connection to "outlines" from writing
+
+## Scope (Lesson 2.4)
+- Predicted correctly which variables were accessible
+- "Rooms in a house" analogy resonated
+```
+
+### `recommendations.md`
+```markdown
+## Before Module 5 (React)
+- Review callback functions (struggled in 2.8)
+- Extra practice with arrow function syntax
+
+## General Observations
+- Visual learner—responds well to diagrams
+- Gets frustrated with typos—encourage console checking
+- Motivated by seeing things "work"
+```
+
+---
+
+## Lesson Count Summary
+
+| Module | Lessons | Focus |
+|--------|---------|-------|
+| 0. Welcome | 3 | Orientation, setup |
+| 1. HTML/CSS | 6 | Foundation styling |
+| 2. JavaScript | 10 | Core programming |
+| 3. Git | 5 | Version control |
+| 4. Tailwind | 5 | Utility CSS |
+| 5. React | 10 | Component fundamentals |
+| 6. Search | 8 | API integration |
+| 7. Rating | 7 | Core feature |
+| 8. Persistence | 7 | Database |
+| 9. AI | 6 | Intelligence |
+| 10. Deploy | 6 | Polish & ship |
+| **Total** | **73 lessons** | |
+
+At ~30 min/lesson average: ~36 hours of learning
+At 1 lesson/day: ~2.5 months
+At 2 lessons/day: ~5 weeks
+*(But it's self-paced—no pressure!)*
+
+---
+
+## Final Decisions
+
+| Decision | Choice |
+|----------|--------|
+| App name | CineLog |
+| Extra array/object practice | Optional (not required for progress) |
+| Practice exercises | "Final boss/test" format for spaced repetition |
+| shadcn/ui timing | **Module 5** (hybrid approach—see below) |
+| Mentor notes location | Subfolder (`.mentor/notes/`), checked into git |
+| Lesson numbering | X.Y format |
+
+---
+
+## shadcn/ui Strategy (Hybrid Approach)
+
+### Philosophy
+shadcn/ui is introduced in Module 5 because:
+1. **Pablo's motivation:** He wants results that look good. Early polish sustains engagement.
+2. **Transparency:** Unlike black-box libraries, shadcn copies source code into the project. Pablo can open any component and see it's just HTML + Tailwind.
+3. **Real-world practice:** Professional developers use component libraries. Learning to read and extend them is a skill.
+4. **Strategic manual building:** Complex interactive components (StarRating) are still built from scratch to deepen understanding.
+
+### Component Approach by Type
+
+| Component Type | Approach | Module |
+|----------------|----------|--------|
+| **Card, Button, Badge** | Use shadcn, explain it's "just Tailwind" | 5 |
+| **Input, Select, Label** | Use shadcn, walk through source code | 5-6 |
+| **StarRating** | **Build from scratch** | 7 |
+| **Dialog/Modal** | Use shadcn, study source code together | 7 |
+| **Skeleton, Spinner** | Use shadcn | 10 |
+
+### Key Teaching Moments
+
+**Module 5.2 – First Component (shadcn introduction):**
+```
+"We're using a library called shadcn/ui. Most component libraries are 
+black boxes—you can't see inside. shadcn is different: it copies the 
+actual code into your project. Let's install a Card and look inside..."
+
+*Pablo opens components/ui/card.tsx*
+
+"See? It's just a div with Tailwind classes. No magic. You could have 
+written this yourself—shadcn just saved you the time."
+```
+
+**Module 7.2 – StarRating (manual build):**
+```
+"For this one, we're building from scratch. This is an interactive 
+component with hover states and click handling—perfect for practicing 
+what you've learned. Plus, you'll appreciate pre-built components more 
+after doing this manually."
+
+*Pablo builds StarRating step by step*
+
+"Now you know what goes into making a controlled, interactive component. 
+When you use shadcn's more complex components, you'll understand the 
+patterns they use."
+```
+
+**Module 7.4 – Dialog (shadcn with source review):**
+```
+"The rating form needs a modal. We'll use shadcn's Dialog component, 
+but let's look inside first..."
+
+*Pablo reads through dialog.tsx*
+
+"See how it handles open/close state? This is the same useState pattern 
+you used for StarRating, just packaged up for reuse."
+```
+
+### Components Used in CineLog
+
+| shadcn Component | Where Used | Notes |
+|------------------|------------|-------|
+| Card | Movie cards, rating display | Introduced in Module 5 |
+| Button | Throughout | Introduced in Module 5 |
+| Input | Search bar, forms | Module 5-6 |
+| Badge | Genre tags, ratings | Module 6 |
+| Select | Filters (genre, year) | Module 6 |
+| Dialog | Rating modal | Module 7 (source reviewed) |
+| Skeleton | Loading states | Module 10 |
+| Alert | Error messages | Module 10 |
+
+### What Pablo Builds From Scratch
+
+| Component | Module | Why Manual |
+|-----------|--------|------------|
+| **StarRating** | 7 | Core learning—controlled components, hover state, click handling |
+| **MovieGrid** | 5-6 | Practice with mapping + composition (uses shadcn Card inside) |
+| **SearchBar** | 6 | Practice with controlled inputs (uses shadcn Input inside) |
+| **WatchedList** | 7 | Practice with state management and lists |
+| **RecommendationPanel** | 9 | Combines everything learned |
+
+---
+
+## Updated Module 5 Lesson List
+
+| Lesson | What Pablo Learns | shadcn Involved? |
+|--------|-------------------|------------------|
+| 5.1 What Is React? | Components, declarative UI, virtual DOM | No |
+| 5.2 Your First Component | Function components, JSX + **shadcn intro** | Yes—Card |
+| 5.3 JSX Syntax | JSX rules, expressions, className | No |
+| 5.4 Props: Passing Data | Props as function arguments | Uses Card |
+| 5.5 Rendering Lists | .map() in JSX, keys | Uses Card |
+| 5.6 State Intro | Why we need state, mental model | No |
+| 5.7 useState in Action | useState hook, setter functions | Uses Button |
+| 5.8 Events: onClick | Event handlers, passing functions | Uses Button |
+| 5.9 Events: Forms | Controlled inputs, onChange | Uses Input |
+| 5.10 Component Composition | Breaking UI into pieces, children | Uses multiple |
+
+---
+
+## Mentor Notes Folder Structure (Updated)
+
+```
+cinelog-course/
+├── ...
+├── .mentor/                         # Checked into git, not in root
+│   └── notes/
+│       ├── progress-log.md
+│       ├── struggles.md
+│       ├── wins.md
+│       └── recommendations.md
+├── ...
+```
+
+The `.mentor/` prefix makes it less obvious but still accessible. It will be tracked in git so you can review Pablo's progress by checking his commits.
+
+---
+
+## Practice Exercises Strategy (Final Boss Format)
+
+Each module ends with optional "challenge exercises" that serve as:
+1. **Comprehension check** – Can Pablo apply the concepts without hand-holding?
+2. **Spaced repetition** – Revisit concepts from earlier modules
+3. **Portfolio material** – Extra projects if he wants to show more work
+
+### Structure
+
+```
+practice-exercises/
+├── module-1-html-css/
+│   ├── README.md                    # Instructions
+│   ├── challenge-1-profile-card.md  # Build a profile card
+│   └── challenge-2-nav-bar.md       # Build a responsive nav
+│
+├── module-2-javascript/
+│   ├── README.md
+│   ├── challenge-1-word-counter.md  # String manipulation
+│   ├── challenge-2-todo-data.md     # Array/object manipulation
+│   └── challenge-3-movie-filter.md  # Combines everything (callbacks to earlier learning)
+│
+├── module-5-react/
+│   ├── README.md
+│   ├── challenge-1-counter-app.md   # State practice
+│   └── challenge-2-todo-list.md     # Full mini-app
+│
+└── final-boss/
+    ├── README.md
+    └── book-tracker.md              # Build a simplified CineLog for books
+                                     # (Tests everything learned)
+```
+
+### "Final Boss" Concept
+
+After completing the main course, Pablo can attempt the **Book Tracker Challenge**:
+- Same architecture as CineLog (search, rate, persist, recommend)
+- Uses Google Books API instead of TMDB
+- No hand-holding—tests if he can apply patterns independently
+- Optional but highly recommended for solidifying learning
+
+---
+
+## Ready to Build
+
+The course structure is now complete. Next steps:
+
+1. **Scaffold the project folder structure**
+2. **Write CLAUDE.md files** (teaching scripts for each lesson)
+3. **Create slash commands** (`/start-0-1`, `/start-1-1`, etc.)
+4. **Set up cinelog-app/** with minimal scaffolding
+5. **Write project-context/** documents (APP_VISION, ARCHITECTURE_MAP, etc.)
+6. **Create practice exercises** with "final boss" challenges
