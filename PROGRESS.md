@@ -2,9 +2,9 @@
 
 > **Last Updated:** 2025-11-27
 >
-> **Current Phase:** 5 - Database Integration (Complete)
+> **Current Phase:** 6 - AI Recommendations (Complete)
 >
-> **Status:** Phase 5 complete. Ratings now persist to Supabase. Ready for Phase 6 (AI Recommendations).
+> **Status:** Phase 6 complete. AI recommendations working. Ready for Phase 7 (Polish & Finalize).
 
 ---
 
@@ -51,9 +51,11 @@
 
 ## Phase 6: AI Recommendations
 
-- [ ] Create API route (app/api/recommendations/route.js)
-- [ ] Create lib/ai.js functions
-- [ ] Build RecommendationPanel component
+- [x] Create API route (app/api/recommendations/route.js)
+- [x] Create lib/ai.js functions
+- [x] Build RecommendationPanel component
+- [x] Add recommendations button to movie detail page
+- [x] Add recommendations button to watched list page
 
 ## Phase 7: Polish & Finalize
 
@@ -84,8 +86,8 @@
 - [x] Can sort watched list
 - [x] Can edit existing rating
 - [x] Can delete rating
-- [ ] AI recommendations work
-- [ ] Recommendations include explanations
+- [x] AI recommendations work
+- [x] Recommendations include explanations
 - [ ] App is responsive (mobile/tablet/desktop)
 - [ ] Loading states display correctly
 - [ ] Errors are handled gracefully

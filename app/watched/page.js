@@ -155,7 +155,7 @@ export default function WatchedPage() {
                     </div>
                   </Link>
 
-                  {/* Delete button / confirmation */}
+                  {/* Delete action */}
                   <div className="px-4 pb-4">
                     {isDeleting ? (
                       <div className="flex gap-2">

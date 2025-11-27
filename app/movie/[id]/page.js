@@ -10,6 +10,7 @@ import { getMovieDetails } from "@/lib/tmdb";
 import { useRatings } from "@/lib/ratings-context";
 import RatingForm from "@/components/RatingForm";
 import RatingDisplay from "@/components/RatingDisplay";
+import RecommendationPanel from "@/components/RecommendationPanel";
 
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
@@ -181,6 +182,11 @@ export default function MoviePage() {
                   </Button>
                 </div>
                 <RatingDisplay rating={existingRating} size="md" />
+
+                {/* AI Recommendations button */}
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <RecommendationPanel movie={movie} ratings={existingRating} />
+                </div>
               </div>
             ) : (
               <div>
