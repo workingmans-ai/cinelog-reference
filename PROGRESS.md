@@ -2,9 +2,9 @@
 
 > **Last Updated:** 2024-11-27
 >
-> **Current Phase:** 2 - Static Components
+> **Current Phase:** 3 - TMDB Integration
 >
-> **Status:** Phase 2 complete, awaiting validation
+> **Status:** Phase 3 complete, awaiting validation
 
 ---
 
@@ -25,10 +25,10 @@
 
 ## Phase 3: TMDB Integration
 
-- [ ] Create lib/tmdb.js API functions
-- [ ] Build SearchBar component with debounce
-- [ ] Connect search to live TMDB data
-- [ ] Add genre and decade filters
+- [x] Create lib/tmdb.js API functions
+- [x] Build SearchBar component with debounce
+- [x] Connect search to live TMDB data
+- [x] Add genre and decade filters
 
 ## Phase 4: Rating System (Local State)
 
