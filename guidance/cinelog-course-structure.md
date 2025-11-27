@@ -555,6 +555,23 @@ SQL (Structured Query Language) is how you talk to databases. It's like giving i
 - `UPDATE movies SET year = 2000 WHERE id = 550` → "Change the year to 2000 for movie #550"
 - `DELETE FROM movies WHERE id = 550` → "Remove movie #550"
 
+**What Is Upsert?**
+Upsert = "Update or Insert." It's a shortcut that says: "Add this row, but if it already exists, update it instead."
+
+Without upsert, you'd need to:
+1. Check if the row exists
+2. If yes → UPDATE
+3. If no → INSERT
+
+With upsert, it's one step. Supabase makes this easy:
+```javascript
+await supabase.from("ratings").upsert({ movie_id: 550, overall: 5 });
+// If movie 550 has no rating → inserts new row
+// If movie 550 already rated → updates existing row
+```
+
+We use upsert for both movies (cache TMDB data) and ratings (save user scores).
+
 **Why Supabase?**
 Supabase gives us a real PostgreSQL database with:
 - A visual dashboard (like looking at the spreadsheet)
@@ -577,10 +594,47 @@ Supabase gives us a real PostgreSQL database with:
 | 8.1 Why We Need a Database | Client vs server storage, persistence | Identifies what data needs to persist | Understands the problem |
 | 8.2 Supabase Setup | Creating account, dashboard tour | Creates Supabase project | Dashboard is accessible |
 | 8.3 Creating Tables | Tables, columns, data types, primary keys | Creates `movies` and `ratings` tables | Tables exist in Supabase |
-| 8.4 Inserting Data | Supabase client, INSERT operations | Wires submit to save to database | Submit → data in Supabase |
+| 8.4 Inserting Data | Supabase client, upsert operations | Wires submit to save to database | Submit → data in Supabase |
 | 8.5 Reading Data | SELECT operations, loading on mount | Loads watched list from database | Page loads saved ratings |
-| 8.6 Updating and Deleting | UPDATE, DELETE operations | Adds edit/delete functionality | Can modify/remove ratings |
+| 8.6 Updating and Deleting | Upsert for updates, DELETE for removal | Adds edit/delete functionality | Can modify/remove ratings |
 | 8.7 Wiring It Together | Replacing local state with database | Full integration | **Data persists across sessions!** |
+
+#### Implementation Patterns (Keep It Simple)
+
+The database code follows beginner-friendly patterns:
+
+**Use `upsert()` instead of check-then-insert/update:**
+```javascript
+// GOOD: One operation handles both insert and update
+const { data, error } = await supabase
+  .from("ratings")
+  .upsert({ movie_id: movieId, overall: 5 }, { onConflict: "movie_id" });
+
+// AVOID: Checking first, then deciding (more complex)
+const existing = await getRating(movieId);
+if (existing) {
+  await supabase.from("ratings").update(...);
+} else {
+  await supabase.from("ratings").insert(...);
+}
+```
+
+**Use plain functions instead of useCallback:**
+```javascript
+// GOOD: Simple function inside component
+function getRating(movieId) {
+  return ratings[movieId] || null;
+}
+
+// AVOID: useCallback (optimization beginners don't need)
+const getRating = useCallback((movieId) => {
+  return ratings[movieId] || null;
+}, [ratings]);
+```
+
+**Skip database triggers and indexes:**
+- Triggers (auto-updating timestamps) → Set `updated_at` in JavaScript instead
+- Indexes → Premature optimization; our dataset is small
 
 #### Design Decision: Where Does Movie Data Come From?
 

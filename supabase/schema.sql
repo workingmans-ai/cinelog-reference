@@ -31,10 +31,6 @@ CREATE TABLE ratings (
   UNIQUE(movie_id)                    -- One rating per movie
 );
 
--- Create index for faster lookups
-CREATE INDEX idx_ratings_movie_id ON ratings(movie_id);
-CREATE INDEX idx_ratings_created_at ON ratings(created_at DESC);
-
 -- Row Level Security (RLS) policies
 -- For this simple app without auth, we allow all operations
 -- In a production app, you'd restrict these to authenticated users
@@ -49,18 +45,3 @@ CREATE POLICY "Allow all operations on movies" ON movies
 -- Allow all operations on ratings table (public access)
 CREATE POLICY "Allow all operations on ratings" ON ratings
   FOR ALL USING (true) WITH CHECK (true);
-
--- Function to automatically update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Trigger to auto-update updated_at on ratings table
-CREATE TRIGGER update_ratings_updated_at
-  BEFORE UPDATE ON ratings
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
