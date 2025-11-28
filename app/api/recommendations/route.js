@@ -53,11 +53,14 @@ export async function POST(request) {
 
     // Validate input
     if (!movie || !ratings) {
+      console.error("[AI] Missing movie or ratings in request");
       return Response.json(
         { error: "Movie and ratings are required" },
         { status: 400 }
       );
     }
+
+    console.log("[AI] Getting recommendations for:", movie.title);
 
     // Call Claude API
     const message = await client.messages.create({
@@ -68,11 +71,23 @@ export async function POST(request) {
 
     // Parse Claude's response
     const responseText = message.content[0].text;
-    const recommendations = JSON.parse(responseText);
 
+    // Try to parse JSON - Claude might not always return valid JSON
+    let recommendations;
+    try {
+      recommendations = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error("[AI] Failed to parse Claude response as JSON:", responseText);
+      return Response.json(
+        { error: "Failed to parse recommendations" },
+        { status: 500 }
+      );
+    }
+
+    console.log("[AI] Successfully got", recommendations.length, "recommendations");
     return Response.json({ recommendations });
   } catch (error) {
-    console.error("Recommendation error:", error);
+    console.error("[AI] Recommendation error:", error.message);
     return Response.json(
       { error: "Failed to get recommendations" },
       { status: 500 }

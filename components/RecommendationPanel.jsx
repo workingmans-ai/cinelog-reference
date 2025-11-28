@@ -27,7 +27,7 @@ export default function RecommendationPanel({ movie, ratings }) {
       setRecommendations(recs);
       setHasLoaded(true);
     } catch (err) {
-      console.error("Failed to get recommendations:", err);
+      console.error("[Recommendations] Failed to get recommendations:", err.message);
       setError("Failed to get recommendations. Please try again.");
     } finally {
       setLoading(false);

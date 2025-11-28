@@ -25,6 +25,7 @@ export default function MoviePage() {
 
   const { getRating, saveRating } = useRatings();
   const existingRating = getRating(movieId);
+  const [saveError, setSaveError] = useState(null);
 
   // Fetch movie details on mount
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function MoviePage() {
         setError(null);
       } catch (err) {
         setError("Failed to load movie details");
-        console.error(err);
+        console.error("[MoviePage] Failed to load movie details:", err.message);
       } finally {
         setLoading(false);
       }
@@ -48,17 +49,25 @@ export default function MoviePage() {
   }, [movieId]);
 
   // Handle rating submission
-  function handleRatingSubmit(ratingData) {
-    saveRating(movieId, ratingData, {
-      id: movie.id,
-      title: movie.title,
-      poster_path: movie.poster_path,
-      release_date: movie.release_date,
-      genres: movie.genres,
-      overview: movie.overview,
-      runtime: movie.runtime,
-    });
-    setShowRatingForm(false);
+  async function handleRatingSubmit(ratingData) {
+    setSaveError(null);
+
+    try {
+      await saveRating(movieId, ratingData, {
+        id: movie.id,
+        title: movie.title,
+        poster_path: movie.poster_path,
+        release_date: movie.release_date,
+        genres: movie.genres,
+        overview: movie.overview,
+        runtime: movie.runtime,
+      });
+      setShowRatingForm(false);
+      console.log("[MoviePage] Rating saved successfully for movie:", movie.title);
+    } catch (err) {
+      console.error("[MoviePage] Failed to save rating:", err);
+      setSaveError("Failed to save rating. Please try again.");
+    }
   }
 
   // Loading state
@@ -164,6 +173,13 @@ export default function MoviePage() {
 
           {/* Overview */}
           <p className="text-slate-300 mt-6 leading-relaxed">{movie.overview}</p>
+
+          {/* Save error message */}
+          {saveError && (
+            <div className="mt-6 p-4 bg-red-900/20 border border-red-800 rounded-lg">
+              <p className="text-red-400">{saveError}</p>
+            </div>
+          )}
 
           {/* Rating section */}
           <div className="mt-8 p-4 bg-slate-800/50 rounded-lg">

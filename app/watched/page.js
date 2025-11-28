@@ -30,6 +30,7 @@ export default function WatchedPage() {
   const { getAllRatings, deleteRating } = useRatings();
   const [sortBy, setSortBy] = useState("date-desc");
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   const allRatings = getAllRatings();
 
@@ -60,9 +61,18 @@ export default function WatchedPage() {
     setDeleteConfirm(movieId);
   }
 
-  function handleDeleteConfirm(movieId) {
-    deleteRating(movieId);
-    setDeleteConfirm(null);
+  async function handleDeleteConfirm(movieId) {
+    setDeleteError(null);
+
+    try {
+      await deleteRating(movieId);
+      setDeleteConfirm(null);
+      console.log("[WatchedPage] Rating deleted successfully");
+    } catch (err) {
+      console.error("[WatchedPage] Failed to delete rating:", err);
+      setDeleteError("Failed to delete rating. Please try again.");
+      setDeleteConfirm(null);
+    }
   }
 
   function handleDeleteCancel() {
@@ -78,6 +88,13 @@ export default function WatchedPage() {
           {allRatings.length} {allRatings.length === 1 ? "movie" : "movies"} rated
         </p>
       </div>
+
+      {/* Delete error message */}
+      {deleteError && (
+        <div className="mb-6 p-4 bg-red-900/20 border border-red-800 rounded-lg">
+          <p className="text-red-400">{deleteError}</p>
+        </div>
+      )}
 
       {/* Empty state */}
       {allRatings.length === 0 ? (

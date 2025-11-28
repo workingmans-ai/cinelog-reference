@@ -41,7 +41,7 @@ export default function HomePage() {
         const genreList = await getGenres();
         setGenres(genreList);
       } catch (err) {
-        console.error("Failed to load genres:", err);
+        console.error("[HomePage] Failed to load genres:", err.message);
       }
     }
     loadGenres();
@@ -62,7 +62,7 @@ export default function HomePage() {
         setError(null);
       } catch (err) {
         setError("Failed to load movies from TMDB API");
-        console.error(err);
+        console.error("[HomePage] Failed to load popular movies:", err.message);
       } finally {
         setLoading(false);
       }
@@ -82,7 +82,7 @@ export default function HomePage() {
       setError(null);
     } catch (err) {
       setError("Failed to search movies from TMDB API");
-      console.error(err);
+      console.error("[HomePage] Failed to search by title:", err.message);
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ export default function HomePage() {
       setError(null);
     } catch (err) {
       setError("Failed to search actors from TMDB API");
-      console.error(err);
+      console.error("[HomePage] Failed to search by actor:", err.message);
     } finally {
       setLoading(false);
     }
@@ -122,7 +122,7 @@ export default function HomePage() {
         setError(null);
       } catch (err) {
         setError("Failed to discover movies from TMDB API");
-        console.error(err);
+        console.error("[HomePage] Failed to discover movies:", err.message);
       } finally {
         setLoading(false);
       }
@@ -157,7 +157,7 @@ export default function HomePage() {
       setError(null);
     } catch (err) {
       setError("Failed to load more movies");
-      console.error(err);
+      console.error("[HomePage] Failed to load more movies:", err.message);
     } finally {
       setLoadingMore(false);
     }
