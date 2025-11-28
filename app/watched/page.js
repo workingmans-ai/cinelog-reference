@@ -14,7 +14,7 @@ import {
 import StarRating from "@/components/StarRating";
 import { Trash2 } from "lucide-react";
 
-const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w342";
+const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
 // Sort options
 const SORT_OPTIONS = [

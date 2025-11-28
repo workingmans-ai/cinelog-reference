@@ -318,14 +318,34 @@ cinelog-course/
 | 4.4 Responsive with Tailwind | Breakpoint prefixes (sm:, md:, lg:) | Makes a layout responsive | Layout adapts to screen size |
 | 4.5 Rebuild Movie Card | All Tailwind concepts together | Rebuilds Lesson 1.6's card using Tailwind | **Same card, pure Tailwind!** |
 
+**Lesson 4.4 — Key Responsive Patterns:**
+
+Pablo learns mobile-first thinking with Tailwind:
+```
+Base classes apply to all screens (mobile first)
+sm: applies at 640px and up
+md: applies at 768px and up
+lg: applies at 1024px and up
+```
+
+**Common patterns Pablo will use throughout CineLog:**
+- `grid-cols-2 md:grid-cols-4` — 2 columns on mobile, 4 on medium+
+- `flex-col md:flex-row` — Stack on mobile, side-by-side on medium+
+- `hidden md:block` — Hide on mobile, show on medium+
+- `text-sm md:text-base` — Smaller text on mobile
+
+These patterns are applied in Module 10.3 (Responsive Polish) when finalizing the app.
+
 **Checkpoint Quiz:**
 - What does `p-4` do? What about `mt-2`?
 - How do you make something only visible on large screens?
 - What's the Tailwind equivalent of `display: flex; justify-content: space-between;`?
+- What does "mobile-first" mean in Tailwind?
 
 **Analogy Bank:**
 - Tailwind classes = LEGO bricks with specific shapes (snap them together to build)
 - Responsive prefixes = "only apply this when..." instructions
+- Mobile-first = "start with the phone layout, add improvements for bigger screens"
 
 **Unlocked:** "You can now style at the speed of thought. No more switching between HTML and CSS files—it's all inline and fast."
 
@@ -845,16 +865,141 @@ This is just a controlled input (learned in Module 5.9) passed to the prompt.
 | Lesson | What Pablo Learns | What Pablo Does | Milestone |
 |--------|-------------------|-----------------|-----------|
 | 10.1 Loading States | Skeleton screens, spinners, UX | Adds loading indicators everywhere | No jarring blank screens |
-| 10.2 Error Handling | try/catch, error boundaries, messages | Handles failures gracefully | App doesn't crash on errors |
+| 10.2 Error Handling | try/catch, graceful degradation, logging | Handles failures gracefully | App doesn't crash on errors |
 | 10.3 Responsive Polish | Testing on devices, fixing breakpoints | Makes every screen mobile-friendly | Looks great on phone |
 | 10.4 Final Touches | Code cleanup, accessibility basics | Reviews and polishes | Code is clean and commented |
-| 10.5 Deploying to Vercel | Git push, Vercel setup, env vars | Deploys to production | **APP IS LIVE!** 🎉 |
+| 10.5 Deploying to Vercel | Git push, Vercel setup, env vars | Deploys to production | **APP IS LIVE!** |
 | 10.6 Celebration & Next Steps | Review journey, discuss future learning | Reflects on what was built | Has a roadmap forward |
+
+#### Lesson 10.2 — Error Handling Patterns in CineLog
+
+**Why Error Handling Matters:**
+
+Things go wrong: APIs fail, networks drop, databases time out. Without error handling:
+- The app crashes with cryptic errors
+- Users don't know what happened
+- Developers can't debug problems
+
+Good error handling means: the app keeps working (graceful degradation), users see helpful messages, and developers can find problems in logs.
+
+**The Three Parts of Error Handling:**
+
+1. **Catch errors** — Wrap risky code in try/catch
+2. **Show users a message** — Set error state, display in UI
+3. **Log for debugging** — console.error with context
+
+**Pattern Used Throughout CineLog:**
+
+```javascript
+async function handleSomething() {
+  setError(null);        // Clear previous errors
+  setLoading(true);      // Show loading state
+
+  try {
+    const data = await riskyOperation();
+    setData(data);       // Success! Update state
+  } catch (err) {
+    console.error("[Context] What failed:", err.message);
+    setError("User-friendly message here");
+  } finally {
+    setLoading(false);   // Always hide loading
+  }
+}
+```
+
+**Consistent Logging with Prefixes:**
+
+Every log statement uses a prefix so developers know where the message came from:
+
+| Prefix | Where Used |
+|--------|------------|
+| `[TMDB]` | lib/tmdb.js — API calls to TMDB |
+| `[Supabase]` | lib/supabase.js — Database operations |
+| `[AI]` | lib/ai.js, API route — AI recommendations |
+| `[Ratings]` | lib/ratings-context.js — Rating state |
+| `[HomePage]` | app/page.js — Search page |
+| `[MoviePage]` | app/movie/[id]/page.js — Detail page |
+| `[WatchedPage]` | app/watched/page.js — Watched list |
+| `[Recommendations]` | RecommendationPanel.jsx |
+
+**Example from the codebase:**
+```javascript
+// In lib/tmdb.js
+if (!response.ok) {
+  console.error("[TMDB] Failed to search movies, status:", response.status);
+  throw new Error("Failed to search movies");
+}
+console.log("[TMDB] Found", data.results.length, "movies");
+```
+
+**Displaying Errors to Users:**
+
+Errors are shown inline, not in alerts/popups:
+```jsx
+{error && (
+  <div className="text-red-400 p-4 bg-red-900/20 rounded-lg">
+    {error}
+  </div>
+)}
+```
+
+**What NOT to Do (Complexity Ceiling):**
+- No error boundary components (advanced React pattern)
+- No toast/notification libraries
+- No retry logic with exponential backoff
+- No Sentry/error reporting services
+
+Keep it simple: try/catch, useState for error, console.error with prefix.
+
+**Checkpoint for 10.2:**
+- What happens if you don't catch an error in an async function?
+- Why use prefixes in console.log statements?
+- Where should error messages be shown to users?
+
+---
+
+#### Lesson 10.3 — Responsive Patterns Used in CineLog
+
+The reference implementation uses these responsive patterns (all using Tailwind breakpoint prefixes learned in Module 4.4):
+
+**MovieGrid (grid columns):**
+```jsx
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+```
+- Mobile: 2 columns
+- Small (640px+): 3 columns
+- Medium (768px+): 4 columns
+- Large (1024px+): 5 columns
+
+**Watched List (grid columns):**
+```jsx
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+```
+
+**Movie Detail Page (layout direction):**
+```jsx
+<div className="flex flex-col md:flex-row gap-8">
+```
+- Mobile: Poster stacks above info (vertical)
+- Medium+: Poster beside info (horizontal)
+
+**SearchBar Discover Filters (responsive grid):**
+```jsx
+<div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+```
+- Mobile: 2x2 grid of filters
+- Small+: All 4 filters in one row
+
+**Key Teaching Points:**
+- Mobile-first approach: Start with `grid-cols-2`, add larger breakpoints
+- Use `flex-col md:flex-row` for stacking → side-by-side layouts
+- Container pattern: `max-w-6xl mx-auto px-4` centers content with padding
 
 **Checkpoint Quiz:**
 - Why is error handling important for user experience?
 - What's different about environment variables in production?
 - What happens automatically when you push to main now?
+- What does `grid-cols-2 md:grid-cols-4` mean?
 
 **Final Deliverable:** Pablo shares his live URL. The app works. It's on the internet. He built it.
 

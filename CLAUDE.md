@@ -135,7 +135,7 @@ Due to TMDB API limitations (see `/guidance/cinelog-course-structure.md`), searc
 - **Tailwind v3** (not v4): v4 has breaking changes (CSS-first config), v3 is stable and well-documented
 - **JavaScript** (not TypeScript): Pablo is a beginner. TypeScript adds cognitive load. We teach plain JavaScript first; TypeScript comes later in his journey.
 
-## Sample Project Structure
+## Project Structure
 
 ```
 cinelog-reference/
@@ -143,55 +143,66 @@ cinelog-reference/
 ├── .env.local                      # Actual env vars (gitignored)
 ├── .gitignore
 ├── package.json
-├── next.config.js
+├── next.config.mjs                 # Next.js configuration
 ├── tailwind.config.js              # Tailwind v3 configuration
-├── postcss.config.js               # PostCSS config for Tailwind
-├── jsconfig.json                   # Path aliases
+├── postcss.config.mjs              # PostCSS config for Tailwind
+├── jsconfig.json                   # Path aliases (@/* -> ./*)
 ├── components.json                 # shadcn/ui configuration
 ├── README.md
 │
 ├── public/
-│   └── placeholder-poster.png      # Movie-themed fallback (clapperboard icon)
+│   └── placeholder-poster.png      # Movie-themed fallback
 │
-├── src/
-│   ├── app/
-│   │   ├── layout.js               # Root layout with navigation
-│   │   ├── page.js                 # Home/Search page
-│   │   ├── globals.css             # Tailwind imports
-│   │   ├── movie/
-│   │   │   └── [id]/
-│   │   │       └── page.js         # Movie details page
-│   │   └── watched/
-│   │       └── page.js             # Watched list page
+├── app/                            # Next.js App Router (at root, not src/)
+│   ├── layout.js                   # Root layout with navigation
+│   ├── page.js                     # Home/Search page
+│   ├── globals.css                 # Tailwind imports
+│   ├── api/
+│   │   └── recommendations/
+│   │       └── route.js            # AI recommendations API route
+│   ├── movie/
+│   │   └── [id]/
+│   │       └── page.js             # Movie details page
+│   └── watched/
+│       └── page.js                 # Watched list page
+│
+├── components/
+│   ├── ui/                         # shadcn components (auto-generated)
+│   │   ├── button.jsx
+│   │   ├── card.jsx
+│   │   ├── input.jsx
+│   │   ├── label.jsx
+│   │   ├── select.jsx
+│   │   ├── dialog.jsx
+│   │   ├── badge.jsx
+│   │   ├── skeleton.jsx
+│   │   └── alert.jsx
 │   │
-│   ├── components/
-│   │   ├── ui/                     # shadcn components (auto-generated)
-│   │   │   ├── button.jsx
-│   │   │   ├── card.jsx
-│   │   │   ├── input.jsx
-│   │   │   ├── label.jsx
-│   │   │   ├── select.jsx
-│   │   │   ├── dialog.jsx
-│   │   │   ├── badge.jsx
-│   │   │   ├── skeleton.jsx
-│   │   │   └── alert.jsx
-│   │   │
-│   │   ├── Navigation.jsx          # Top nav: "CineLog" logo left, links right
-│   │   ├── MovieCard.jsx           # Single movie card
-│   │   ├── MovieGrid.jsx           # Grid of MovieCards
-│   │   ├── SearchBar.jsx           # Search input + filters
-│   │   ├── StarRating.jsx          # Interactive star rating (BUILT FROM SCRATCH)
-│   │   ├── RatingForm.jsx          # Full rating form (5 dimensions)
-│   │   ├── RatingDisplay.jsx       # Shows existing ratings
-│   │   ├── RecommendationPanel.jsx # AI recommendations display
-│   │   └── LoadingSpinner.jsx      # Loading indicator
-│   │
-│   └── lib/
-│       ├── tmdb.js                 # TMDB API functions
-│       ├── supabase.js             # Supabase client + functions
-│       ├── ai.js                   # Claude API functions
-│       └── utils.js                # Helper functions
+│   ├── Navigation.jsx              # Top nav: "CineLog" logo left, links right
+│   ├── MovieCard.jsx               # Single movie card
+│   ├── MovieGrid.jsx               # Grid of MovieCards
+│   ├── SearchBar.jsx               # Search input + mode tabs + filters
+│   ├── StarRating.jsx              # Interactive star rating (BUILT FROM SCRATCH)
+│   ├── RatingForm.jsx              # Full rating form (5 dimensions)
+│   ├── RatingDisplay.jsx           # Shows existing ratings
+│   └── RecommendationPanel.jsx     # AI recommendations display
+│
+├── lib/
+│   ├── tmdb.js                     # TMDB API functions
+│   ├── supabase.js                 # Supabase client + functions
+│   ├── ratings-context.js          # React context for ratings state
+│   ├── ai.js                       # Client-side AI helper
+│   └── utils.js                    # Helper functions (cn for classnames)
+│
+├── supabase/
+│   ├── schema.sql                  # Database schema
+│   └── seed.sql                    # Sample data
+│
+└── guidance/
+    └── cinelog-course-structure.md # Course lesson plan (reference only)
 ```
+
+Note: We use the root-level `app/` structure (Next.js default) rather than `src/app/` for simplicity.
 
 ## Sample Database Schema (Supabase)
 

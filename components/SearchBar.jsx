@@ -220,13 +220,13 @@ export default function SearchBar({
 
       {/* Discover panel */}
       {mode === "discover" && (
-        <div className="flex gap-4 flex-wrap">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {/* Genre filter */}
           <Select
             value={genre || "all"}
             onValueChange={(val) => setGenre(val === "all" ? "" : val)}
           >
-            <SelectTrigger className="w-40 bg-slate-800 border-slate-700 text-slate-50">
+            <SelectTrigger className="w-full bg-slate-800 border-slate-700 text-slate-50">
               <SelectValue placeholder="Genre" />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-700">
@@ -250,7 +250,7 @@ export default function SearchBar({
             value={decade || "all"}
             onValueChange={(val) => setDecade(val === "all" ? "" : val)}
           >
-            <SelectTrigger className="w-40 bg-slate-800 border-slate-700 text-slate-50">
+            <SelectTrigger className="w-full bg-slate-800 border-slate-700 text-slate-50">
               <SelectValue placeholder="Decade" />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-700">
@@ -271,7 +271,7 @@ export default function SearchBar({
 
           {/* Sort by filter */}
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40 bg-slate-800 border-slate-700 text-slate-50">
+            <SelectTrigger className="w-full bg-slate-800 border-slate-700 text-slate-50">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-700">
@@ -289,7 +289,7 @@ export default function SearchBar({
 
           {/* Minimum rating filter */}
           <Select value={minRating} onValueChange={setMinRating}>
-            <SelectTrigger className="w-40 bg-slate-800 border-slate-700 text-slate-50">
+            <SelectTrigger className="w-full bg-slate-800 border-slate-700 text-slate-50">
               <SelectValue placeholder="Min Rating" />
             </SelectTrigger>
             <SelectContent className="bg-slate-800 border-slate-700">
