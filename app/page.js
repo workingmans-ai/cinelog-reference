@@ -19,6 +19,7 @@ export default function HomePage() {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [mounted, setMounted] = useState(false);
 
   // Store current search params for "Load More"
   const searchParamsRef = useRef({
@@ -26,8 +27,15 @@ export default function HomePage() {
     params: {},
   });
 
+  // Track when component mounts (avoids hydration issues)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Load genres on mount
   useEffect(() => {
+    if (!mounted) return;
+
     async function loadGenres() {
       try {
         const genreList = await getGenres();
@@ -37,10 +45,12 @@ export default function HomePage() {
       }
     }
     loadGenres();
-  }, []);
+  }, [mounted]);
 
   // Load popular movies on mount
   useEffect(() => {
+    if (!mounted) return;
+
     async function loadMovies() {
       try {
         setLoading(true);
@@ -58,7 +68,7 @@ export default function HomePage() {
       }
     }
     loadMovies();
-  }, []);
+  }, [mounted]);
 
   // Handle title search
   const handleSearchByTitle = useCallback(async ({ query, year }) => {

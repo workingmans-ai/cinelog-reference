@@ -683,12 +683,157 @@ Watched List Page:  User visits → Load from Supabase (ratings + cached movies)
 | 9.5 Recommendation UI | Button, loading state, displaying results | Builds "Get Recommendations" feature | Click → see recommendations |
 | 9.6 Displaying Explanations | Parsing AI response, markdown | Shows why each movie was recommended | **Personalized recs with reasons!** |
 
+#### Implementation Details
+
+**Architecture Pattern (Keep API Key Server-Side):**
+```
+Browser (RecommendationPanel)
+    ↓ fetch("/api/recommendations")
+Next.js API Route (app/api/recommendations/route.js)
+    ↓ calls Claude API with ANTHROPIC_API_KEY
+Claude returns JSON
+    ↓
+Browser receives recommendations
+    ↓ for each rec, search TMDB for poster
+Display with posters and reasons
+```
+
+**Why This Pattern:**
+- API keys must stay server-side (never expose in browser)
+- API routes are the simplest way to do this in Next.js
+- Pablo learns a real-world security pattern
+
+**API Route (`app/api/recommendations/route.js`):**
+```javascript
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic();
+
+function buildPrompt(movie, ratings, focusText = "") {
+  // Analyze ratings to find what user loved/disliked
+  const loved = [];
+  const disliked = [];
+
+  if (ratings.plot >= 4) loved.push("plot/story");
+  if (ratings.plot && ratings.plot <= 2) disliked.push("plot/story");
+  // ... same pattern for acting, cinematography, score
+
+  // Build prompt with context
+  let prompt = `You are a movie recommendation expert.
+
+The user watched "${movie.title}" and rated it ${ratings.overall}/5 stars.
+Genres: ${movie.genres?.map((g) => g.name).join(", ")}
+`;
+
+  if (loved.length > 0) {
+    prompt += `\nThey particularly loved: ${loved.join(", ")}.`;
+  }
+  if (disliked.length > 0) {
+    prompt += `\nThey were less impressed by: ${disliked.join(", ")}.`;
+  }
+  if (focusText.trim()) {
+    prompt += `\nThey specifically want movies with: "${focusText.trim()}".`;
+  }
+
+  prompt += `
+
+Recommend 3-5 movies that match what they loved.
+
+IMPORTANT: Respond with ONLY valid JSON:
+[{"title": "Movie Title", "year": 2020, "reason": "Why this matches."}]`;
+
+  return prompt;
+}
+
+export async function POST(request) {
+  const { movie, ratings, focusText } = await request.json();
+
+  const message = await client.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1024,
+    messages: [{ role: "user", content: buildPrompt(movie, ratings, focusText) }],
+  });
+
+  const recommendations = JSON.parse(message.content[0].text);
+  return Response.json({ recommendations });
+}
+```
+
+**Client-Side Function (`lib/ai.js`):**
+```javascript
+// Use simple for...of loop (NOT Promise.all - too advanced)
+export async function getRecommendations(movie, ratings, focusText = "") {
+  const response = await fetch("/api/recommendations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ movie, ratings, focusText }),
+  });
+
+  const data = await response.json();
+
+  // Enrich with TMDB data (sequential, not parallel)
+  const enrichedRecommendations = [];
+  for (const rec of data.recommendations) {
+    try {
+      const searchResults = await searchByTitle(rec.title, rec.year);
+      const tmdbMovie = searchResults.results?.[0] || null;
+      enrichedRecommendations.push({ ...rec, tmdbMovie });
+    } catch (error) {
+      enrichedRecommendations.push({ ...rec, tmdbMovie: null });
+    }
+  }
+
+  return enrichedRecommendations;
+}
+```
+
+**RecommendationPanel Component:**
+- Displays inline on movie detail page (NOT a modal - simpler UX)
+- Shows only for movies that have been rated
+- Optional text input for user to specify what they liked
+- Opens recommended movies in new tab (preserves list)
+- Uses patterns already learned: useState, controlled inputs, onClick, map
+
+#### Complexity Ceiling (What to AVOID)
+
+| Pattern | Why to Avoid | Use Instead |
+|---------|--------------|-------------|
+| `Promise.all` + `async map` | Advanced parallel async | Simple `for...of` loop |
+| Complex prompt building | Hard to modify/understand | Build string incrementally with `if` statements |
+| Modal for recommendations | UX issue (modal closes on navigation) | Inline display |
+| Streaming responses | Advanced pattern | Wait for complete response |
+| `useCallback` | Premature optimization | Plain functions |
+
+#### Teaching Moments
+
+**Lesson 9.3 - Prompt Engineering:**
+The `buildPrompt` function is intentionally simple so Pablo can experiment:
+- Try changing "3-5 movies" to "exactly 3 movies"
+- Try adding "Only recommend comedies"
+- Try changing the JSON format
+
+**Lesson 9.4 - Building Context:**
+```
+"Notice how we analyze the ratings to tell Claude what the user loved?
+If plot is 4-5 stars, we add 'plot/story' to the loved list.
+If it's 1-2 stars, we add it to disliked.
+This gives Claude useful context without sending raw numbers."
+```
+
+**Lesson 9.5 - The focusText Feature:**
+The optional text input lets users say things like:
+- "the twist ending"
+- "the chemistry between the leads"
+- "movies with a similar soundtrack"
+
+This is just a controlled input (learned in Module 5.9) passed to the prompt.
+
 **Checkpoint Quiz:**
 - What context do we send to make recommendations relevant?
 - Why do AI requests take longer than database requests?
 - How would you modify the prompt to only get comedy recommendations?
 
-**Practical Challenge:** Add a "mood" input that influences recommendations ("I want something uplifting").
+**Practical Challenge:** The "mood" input is already built as `focusText`! Try using it with different inputs.
 
 **Unlocked:** "Your app thinks. It understands your taste and explains its reasoning. This is genuinely intelligent software."
 

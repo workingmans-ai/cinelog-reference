@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Sparkles, Loader2 } from "lucide-react";
 import { getRecommendations } from "@/lib/ai";
 
@@ -14,6 +15,7 @@ export default function RecommendationPanel({ movie, ratings }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [focusText, setFocusText] = useState("");
 
   // Fetch recommendations
   async function handleGetRecommendations() {
@@ -21,7 +23,7 @@ export default function RecommendationPanel({ movie, ratings }) {
     setError(null);
 
     try {
-      const recs = await getRecommendations(movie, ratings);
+      const recs = await getRecommendations(movie, ratings, focusText);
       setRecommendations(recs);
       setHasLoaded(true);
     } catch (err) {
@@ -34,16 +36,25 @@ export default function RecommendationPanel({ movie, ratings }) {
 
   return (
     <div className="mt-6">
-      {/* Button to trigger recommendations */}
+      {/* Input and button to trigger recommendations */}
       {!hasLoaded && !loading && (
-        <Button
-          onClick={handleGetRecommendations}
-          variant="outline"
-          className="border-amber-500/50 text-amber-500 hover:bg-amber-500/10"
-        >
-          <Sparkles className="h-4 w-4 mr-2" />
-          Get AI Recommendations
-        </Button>
+        <div className="space-y-3">
+          <Input
+            type="text"
+            placeholder="Optional: What did you like? (e.g., 'the twist ending', 'the soundtrack')"
+            value={focusText}
+            onChange={(e) => setFocusText(e.target.value)}
+            className="bg-slate-800 border-slate-700 text-slate-50 placeholder:text-slate-500"
+          />
+          <Button
+            onClick={handleGetRecommendations}
+            variant="outline"
+            className="border-amber-500/50 text-amber-500 hover:bg-amber-500/10"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            Get AI Recommendations
+          </Button>
+        </div>
       )}
 
       {/* Loading state */}
